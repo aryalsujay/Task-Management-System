@@ -1,0 +1,39 @@
+15 may 2022
+Task Management System
+
+1. Create Task (Add main task)::store this in task table.
+Details: Add
+T1, -> these are sub-tasks::store each sub-tasks T1, T2 ... in seperate table - task detail table, with task ID each
+T2,
+T3 ...
+
+2. Assign Tasks
+a. Create a View where admin can see task and sub-tasks.
+b. A checkbox beside every sub-task.
+c. User option beside every sub-task to select.
+d. After any subtask is checked a assign button where user will be assigned a task.
+
+3. View My Tasks
+User Dashboard::store user info in user tabel and assigned task in task detail table
+a. View Task then Subtask 
+b. An option button - Completed, Require Clarification
+c. Add note (text area) to send this as note.
+d. Submit button which send this data to admin.
+
+4. Clarification
+Admin dashboard::store admin info in admin table
+a. View Clarification tab - user, task, taskdetail, note sent by user, note by you(admin).
+b. Checkbox button add.
+c. Select same user auto and other User options too and reassign button.
+
+5. Quality Check
+Manager dashboard::store in admin as manager
+If usertype==manager then open extra tab in dashboard.
+a. User ,task, sub-task, report of task assigned to user
+b. Add an option to add note column if reassign is selected else completed.
+
+6. Report
+a. Create a table my tasks, not assigned, pending, clarification, reassign, completed
+b. Add count on all of these with a hyperlink that shows the table of all matching tasks from the taskdetail table.
+
+
