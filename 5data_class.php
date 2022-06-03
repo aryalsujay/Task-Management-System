@@ -72,7 +72,7 @@ session_start();
             foreach($recordSet as $row){
                 $tid=$row['id'];
                 $t1=$row['detail'];
-
+                //t2,t3 .. to add after delimiter
             }
             $q2="INSERT INTO tdetail(id, tid, t1, t2, t3)VALUES('', '$tid','$t1','','')";
             if($this->connection->exec($q2)){
