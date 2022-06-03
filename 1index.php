@@ -39,43 +39,43 @@
         }
     ?>
 
-    <a href="1index.php"><h2>Pala TMS</h2></a>
+    <a href="1index.php"><h2>Task</h2></a>
     <div class="container login-container">
         <div class="row"><h4><?php echo $msg?></h4></div>
         <div class="row">
             <div class="col-md-6 login1">
             <h3>Savaka</h3>
-                <form action="2login_server_page.php" method="get">                    
+                <form action="2login_server_page.php" method="get">
                     <div class="form-group">
-                        <input type="text" class="form-control" name="email" value="" placeholder="Enter Email"/>                        
+                        <input type="text" class="form-control" name="email" value="" placeholder="Enter Email"/>
                     </div>
                     <label style="color:red">*<?php echo $emailmsg?></label>
                     <div class="form-group">
-                        <input type="password" class="form-control" name="pass" value="" placeholder="Enter Password"/>                        
+                        <input type="password" class="form-control" name="pass" value="" placeholder="Enter Password"/>
                     </div>
                     <label style="color:red">*<?php echo $passmsg?></label>
                     <div class="form-group">
-                        <input type="submit" class="btn-primary" value="Login"/>                        
+                        <input type="submit" class="btn-primary" value="Login"/>
                     </div>
                     <a href=# class="Forgotpass">Forgot Password</a>
-                </form>                
+                </form>
             </div>
             <div class="col-md-6 login2">
-            <h3>Admin</h3>
-                <form action="3loginadmin_server_page.php" method="get">                    
+            <h3>Maha Savaka</h3>
+                <form action="3loginadmin_server_page.php" method="get">
                     <div class="form-group">
-                        <input type="text" class="form-control" name="ademail" value="" placeholder="Enter Email"/>                        
+                        <input type="text" class="form-control" name="ademail" value="" placeholder="Enter Email"/>
                     </div>
                     <label style="color:red">*<?php echo $ademailmsg?></label>
                     <div class="form-group">
-                        <input type="password" class="form-control" name="adpass" value="" placeholder="Enter Password"/>                        
+                        <input type="password" class="form-control" name="adpass" value="" placeholder="Enter Password"/>
                     </div>
                     <label style="color:red">*<?php echo $adpassmsg?></label>
                     <div class="form-group">
-                        <input type="submit" class="btn-primary"value="Login"/>                        
+                        <input type="submit" class="btn-primary"value="Login"/>
                     </div>
                     <a href=# class="Forgotpass">Forgot Password</a>
-                </form>                
+                </form>
             </div>
 
         </div>

@@ -3,7 +3,8 @@ Task Management System
 
 1. Create Task (Add main task)::store this in task table.
 Details: Add
-T1, -> these are sub-tasks::store each sub-tasks T1, T2 ... in seperate table - task detail table, with task ID each
+T1, -> these are sub-tasks::store each sub-tasks T1, T2 ... in seperate table - task detail table,
+with task ID each
 T2,
 T3 ...
 
@@ -15,7 +16,7 @@ d. After any subtask is checked a assign button where user will be assigned a ta
 
 3. View My Tasks
 User Dashboard::store user info in user tabel and assigned task in task detail table
-a. View Task then Subtask 
+a. View Task then Subtask
 b. An option button - Completed, Require Clarification
 c. Add note (text area) to send this as note.
 d. Submit button which send this data to admin.

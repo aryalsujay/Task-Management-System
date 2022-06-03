@@ -30,7 +30,7 @@ define("ROW_PER_PAGE",2);
 }
 
 .innerdiv{
-    
+
     text-align: center;
     margin: 100px;
 }
@@ -42,7 +42,7 @@ define("ROW_PER_PAGE",2);
     float: right;
     width: 75%;
 }
-.greenbtn{    
+.greenbtn{
     background-color: greenyellow;
     border-radius: 1rem;
     padding: 0.5%;
@@ -102,13 +102,13 @@ th{
     }
     td, a{
     color:black;
-    } 
+    }
     a{
         text-align: center;
         text-decoration: none;
     }
-   
-    .tbl-qa{width: 100%;font-size:0.9em;background-color: #f5f5f5;}
+
+.tbl-qa{width: 100%;font-size:0.9em;background-color: #f5f5f5;}
 .tbl-qa th.table-header {padding: 5px;text-align: center;padding:10px;}
 .tbl-qa .table-row td {padding:10px;background-color: #FDFDFD;vertical-align:top;}
 .button_link {color:#FFF;text-decoration:none; background-color:#428a8e;padding:10px;}
@@ -120,36 +120,38 @@ th{
 .btn-page.yo{background: #6495ED;}
 </style>
 <body>
-    
-    <div class="container">  
-        <div class="innerdiv">      
-            <div class="row"><a href="7admin_service_dashboard.php"><img class="imglogo" src="images/logo.png"></a></div>
+
+    <div class="container">
+        <div class="innerdiv">
+            <div class="row"><a href="7admin_service_dashboard.php"><img class="imglogo" src="images/tm.png"></a></div>
             <div class="leftinnerdiv">
                 <Button class="greenbtn" onclick="openpart('search')">Search</Button>
-                <Button class="greenbtn" onclick="openpart('addbook')">Add book</Button>
+                <Button class="greenbtn" onclick="openpart('addtask')">Add task</Button>
                 <Button class="greenbtn" onclick="openpart('bookreport')">Book Report</Button>
                 <Button class="greenbtn" onclick="openpart('bookrequestapprove')">Book Request</Button>
                 <Button class="greenbtn" onclick="openpart('addperson')">Add Student</Button>
                 <Button class="greenbtn" onclick="openpart('studentrecord')">Student Record</Button>
-                <Button class="greenbtn" onclick="openpart('issuebook')">Issue Book</Button>                
+                <Button class="greenbtn" onclick="openpart('issuebook')">Issue Book</Button>
                 <Button class="greenbtn" onclick="openpart('issuebookreport')">Issue Book Report</Button>
                 <a href="1index.php"><Button class="greenbtn">Logout</Button></a>
             </div>
 
             <!-- Add Template-->
-            <div class="rightinnerdiv">                
-                <div id="addbook" class="innerright portion" style="display:none">               
-                <Button class="greenbtn">Add Book</Button>
-                    <form action="9addbook_page.php" method="post" enctype="multipart/form-data">
-                        <label>BookName: </label><input type="text"  name="bookname"/>
+            <div class="rightinnerdiv">
+                <div id="addtask" class="innerright portion" style="display:none">
+                <Button class="greenbtn">Add Task</Button>
+                    <form action="8addtask.php" method="post" enctype="multipart/form-data">
+                        <label>Task Name: </label><input type="text" name="tname"/>
                         <br>
-                        <input type="submit" class="btn-primary" value="Submit"/>
+                        <label>Task Detail: </label>
+                        <textarea rows = "7" cols = "40" maxlength = "200" name = "tdetail"></textarea><br>
+                        <input type="submit" class="btn-primary" value="Add Task"/>
                         <br>
-                        <br>    
+                        <br>
                     </form>
                 </div>
             </div>
-            
+
             <!-- Add User-->
             <div class="rightinnerdiv">
                 <div id="addperson" class="innerright portion" style="display:none">
@@ -170,8 +172,8 @@ th{
                         <input type="submit" class="btn-primary" value="Submit"/>
                     </form>
                 </div>
-            </div>   
-            
+            </div>
+
             <!-- View Report template -->
             <div class="rightinnerdiv">
                 <div id="issuebookreport" class="innerright portion" style="display:none">
@@ -181,10 +183,10 @@ th{
                         $u->setconnection();
                         $u->issuereport();
                         $recordset=$u->issuereport();
-                    
+
                         $table="<table style='font-family: Arial, Helvetica, sans-serif;border-collapse: collapse;width: 100%;'><tr><th style='  border: 1px solid #ddd;
                         padding: 8px;'>Issue Name</th><th>Book Name</th><th>Issue Date</th><th>Return Date</th><th>Fine</th></th><th>Issue Type</th><th>Return</th></tr>";
-                        
+
                         foreach($recordset as $row){
                         $table.="<tr>";
                         "<td>$row[0]</td>";
@@ -203,49 +205,11 @@ th{
                 </div>
             </div>
 
-            <!-- View detail template -->
-            <div class="rightinnerdiv">
-                <div id="bookdetail" class="innerright portion" style="<?php if(!empty($_REQUEST['viewid'])){$viewid=$_REQUEST['viewid'];}else{echo "display:none";}?>">
-                        <button class="greenbtn">Book Detail</button>
-                        <?php
-                            $obj= new data;
-                            $obj->setconnection();
-                            $obj->bookdetail($viewid);
-                            $recordset=$obj->bookdetail($viewid);
 
-                            foreach($recordset as $row){
 
-                                $bookid= $row[0];
-                               $bookimg= $row[1];
-                               $bookname= $row[2];
-                               $bookdetail= $row[3];
-                               $bookauthor= $row[4];
-                               $bookpub= $row[5];
-                               $branch= $row[6];
-                               $bookprice= $row[7];
-                               $bookquantity= $row[8];
-                               $bookava= $row[9];
-                               $bookrent= $row[10];
-                
-                            }       
-                                                   
-                        ?>
-                        <img width='150px' height='150px' style='border:1px solid #333333; float:left;margin-left:20px' src="uploads/<?php echo $bookimg?> "/>
-                        </br>
-                        <p style="color:black"><u>Book Name:</u> &nbsp&nbsp<?php echo $bookname ?></p>
-                        <p style="color:black"><u>Book Detail:</u> &nbsp&nbsp<?php echo $bookdetail ?></p>
-                        <p style="color:black"><u>Book Authour:</u> &nbsp&nbsp<?php echo $bookauthor ?></p>
-                        <p style="color:black"><u>Book Publisher:</u> &nbsp&nbsp<?php echo $bookpub ?></p>
-                        <p style="color:black"><u>Book Branch:</u> &nbsp&nbsp<?php echo $branch ?></p>
-                        <p style="color:black"><u>Book Price:</u> &nbsp&nbsp<?php echo $bookprice ?></p>
-                        <p style="color:black"><u>Book Available:</u> &nbsp&nbsp<?php echo $bookava ?></p>
-                        <p style="color:black"><u>Book Rent:</u> &nbsp&nbsp<?php echo $bookrent ?></p>
-
-                </div>
-            </div>
-        </div>                
+        </div>
     </div>
-    
+
     <script>
         function openpart(portion){
             var i;
@@ -254,8 +218,8 @@ th{
                 x[i].style.display="none";
             }
             document.getElementById(portion).style.display="block";
-        }        
+        }
     </script>
-    
+
 </body>
 </html>
