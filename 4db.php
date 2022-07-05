@@ -10,6 +10,7 @@
 <?php
     class db{
         protected $connection;
+        public $q1;
         function setconnection(){
             try{
                 $this->connection=new PDO("mysql:host=localhost;dbname=tms", "root", "");

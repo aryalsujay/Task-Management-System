@@ -127,7 +127,7 @@ th{
             <div class="leftinnerdiv">
                 <Button class="greenbtn" onclick="openpart('search')">Search</Button>
                 <Button class="greenbtn" onclick="openpart('addtask')">Add task</Button>
-                <Button class="greenbtn" onclick="openpart('bookreport')">Book Report</Button>
+                <Button class="greenbtn" onclick="openpart('viewtask')">View Task</Button>
                 <Button class="greenbtn" onclick="openpart('bookrequestapprove')">Book Request</Button>
                 <Button class="greenbtn" onclick="openpart('addperson')">Add Student</Button>
                 <Button class="greenbtn" onclick="openpart('studentrecord')">Student Record</Button>
@@ -136,7 +136,7 @@ th{
                 <a href="1index.php"><Button class="greenbtn">Logout</Button></a>
             </div>
 
-            <!-- Add Template-->
+            <!-- Add Task and sub-tasks at once-->
             <div class="rightinnerdiv">
                 <div id="addtask" class="innerright portion" style="display:none">
                 <Button class="greenbtn">Add Task</Button>
@@ -174,34 +174,61 @@ th{
                 </div>
             </div>
 
-            <!-- View Report template -->
+            <!-- View Task template -->
             <div class="rightinnerdiv">
-                <div id="issuebookreport" class="innerright portion" style="display:none">
-                    <button class="greenbtn">Issue Book Report</button>
+                <div id="viewtask" class="innerright portion" style="display:none">
+                    <button class="greenbtn">View Task</button>
                     <?php
                         $u= new data;
                         $u->setconnection();
-                        $u->issuereport();
-                        $recordset=$u->issuereport();
-
-                        $table="<table style='font-family: Arial, Helvetica, sans-serif;border-collapse: collapse;width: 100%;'><tr><th style='  border: 1px solid #ddd;
-                        padding: 8px;'>Issue Name</th><th>Book Name</th><th>Issue Date</th><th>Return Date</th><th>Fine</th></th><th>Issue Type</th><th>Return</th></tr>";
-
-                        foreach($recordset as $row){
-                        $table.="<tr>";
-                        "<td>$row[0]</td>";
-                        $table.="<td>$row[3]</td>";
-                        $table.="<td>$row[4]</td>";
-                        $table.="<td>$row[7]</td>";
-                        $table.="<td>$row[8]</td>";
-                        $table.="<td>$row[9]</td>";
-                        $table.="<td>$row[5]</td>";
-                        $table.="<td><button type='button' class='btn btn-primary'><a href='7admin_service_dashboard.php?returnid=$row[0]'>RETURN</a></button></td>";
-                        $table.="</tr>";
-                        }
-                        $table.="</table>";
-                        echo $table;
+                        $u->viewtask();
+                        $result=$u->viewtask();
                     ?>
+                        <table class='tbl-qa'>
+                        <thead>
+                            <tr>
+                                <th class='table-header' width='20%'>Task</th>
+                                <th class='table-header' width='40%'>Sub-Task 1</th>
+                                <th class='table-header' width='20%'>Sub-Task 2</th>
+                                <th class='table-header' width='20%'>Sub-Task 3</th>
+                                <th class='table-header' width='20%'>User</th>
+                                <th class='table-header' width='20%'>Checkbox</th>
+                                <th class='table-header' width='20%'>Assign To</th>
+
+                            </tr>
+                        </thead>
+                        <tbody id='table-body'>
+                        <?php
+                        if(!empty($result)) {
+                            foreach($result as $row) {
+                        ?>
+                        <tr class='table-row'>
+                            <td><?php echo $row['tname']; ?></td>
+                            <td><?php echo $row['t1']; ?></td>
+                            <td><?php echo $row['t2']; ?></td>
+                            <td><?php echo $row['t3']; ?></td>
+                            <td>
+                                <select name="name">
+                                    <?php
+                                        $obj=new data();
+                                        $obj->setconnection();
+                                        $obj->studentrecord();
+                                        $recordset=$obj->studentrecord();
+                                        foreach($recordset as $row){
+                                            echo "<option value='" . $row['name'] . "'>" . $row['name'] . "</option>";
+                                        }
+                                    ?>
+                                </select>
+                            </td>
+                            <td><input type="checkbox"/></td>
+                            <td><input type="submit" value="Assign"></button></td>
+
+
+                        </tr>
+                        <?php
+                            }
+                        }
+                        ?>
                 </div>
             </div>
 

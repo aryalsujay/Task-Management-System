@@ -7,10 +7,20 @@ T1, -> these are sub-tasks::store each sub-tasks T1, T2 ... in seperate table - 
 with task ID each
 T2,
 T3 ...
+--> First, searched for how to split a string - delimiter and found a function split_string which works
+only in SQL (P.S. found this out later after exploring and trying it out for 2-3 days).
+Finally, found a Substring_Index function that works in MySQL to seperate the word/sentence using a delimiter.
+Tried hands-on, now it works!
+Check this link out for more info: https://coderwall.com/p/zzgo-w/splitting-strings-with-mysql
+
+--> To implement this in php simply use explode function. https://www.php.net/explode
 
 2. Assign Tasks
 a. Create a View where admin can see task and sub-tasks.
+-->Inner join both task and taskdetail(delimiter seperated table) and insert data into table accordingly.
 b. A checkbox beside every sub-task.
+-->Add in table: <input type="checkbox"/>
+-->Check on how to submit when checked.
 c. User option beside every sub-task to select.
 d. After any subtask is checked a assign button where user will be assigned a task.
 

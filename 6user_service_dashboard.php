@@ -17,7 +17,7 @@
     <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
       <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
       <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-       
+
     <title>Document</title>
 </head>
 <style>
@@ -65,16 +65,16 @@
     }
 </style>
 <body>
-    <?php 
+    <?php
     //include "5data_class.php"; ?>
     <div class="container">
         <div class="innerdiv">
             <div class="row"><img class="imglogo" src="images/logo.PNG"/></div>
-            
+
             <div class="leftinnerdiv">
                 <button class="greenbtn">Welcome</button>
                 <button class="greenbtn" onclick="openpart('myaccount')">My Account</button>
-                <button class="greenbtn" onclick="openpart('reqbook')">Request Book</button>
+                <button class="greenbtn" onclick="openpart('assigntask')">Assigned Task</button>
                 <button class="greenbtn" onclick="openpart('bookreport')">Book Report</button>
                 <a href="1index.php"><button class="greenbtn">LOGOUT</button></a>
             </div>
@@ -92,90 +92,76 @@
                         foreach($recordset as $row){
                             $name=$row[1];
                             $email=$row[2];
-                            $type=$row[4];
                         }
-                        
+
                     ?>
                     <p style=color:black><u>Person Name: </u> &nbsp&nbsp<?php echo "$name" ?></p>
                     <p style="color:black"><u>Person Email:</u> &nbsp&nbsp<?php echo $email ?></p>
-                    <p style="color:black"><u>Account Type:</u> &nbsp&nbsp<?php echo $type ?></p>
-        
+
                 </div>
             </div>
 
             <div class="rightinnerdiv">
-                <div id="bookreport" class="innerright portion" style="<?php if(!empty($_REQUEST['returnid'])){ echo "display:none"; } else { echo "display:none"; } ?>">
-                    <button class="greenbtn">Book Issued Report</button>
+                <div id="assigntask" class="innerright portion" style="display:none">
+                    <button class="greenbtn">View Task</button>
                     <?php
+                        $u= new data;
+                        $u->setconnection();
+                        $u->viewtask();
+                        $result=$u->viewtask();
+                    ?>
+                        <table class='tbl-qa'>
+                        <thead>
+                            <tr>
+                                <th class='table-header' width='20%'>Task</th>
+                                <th class='table-header' width='40%'>Sub-Task 1</th>
+                                <th class='table-header' width='20%'>Sub-Task 2</th>
+                                <th class='table-header' width='20%'>Sub-Task 3</th>
+                                <th class='table-header' width='20%'>User</th>
+                                <th class='table-header' width='20%'>Checkbox</th>
+                                <th class='table-header' width='20%'>Assign To</th>
 
-                        $userlogid=$_SESSION["userid"] = $_GET['userlogid'];
-                        $obj=new data;
-                        $obj->setconnection();
-                        $obj->bookissued($userloginid);
-                        $recordset=$obj->bookissued($userloginid);
+                            </tr>
+                        </thead>
+                        <tbody id='table-body'>
+                        <?php
+                        if(!empty($result)) {
+                            foreach($result as $row) {
+                        ?>
+                        <tr class='table-row'>
+                            <td><?php echo $row['tname']; ?></td>
+                            <td><?php echo $row['t1']; ?></td>
+                            <td><?php echo $row['t2']; ?></td>
+                            <td><?php echo $row['t3']; ?></td>
+                            <td>
+                                <select name="name">
+                                    <?php
+                                        $obj=new data();
+                                        $obj->setconnection();
+                                        $obj->studentrecord();
+                                        $recordset=$obj->studentrecord();
+                                        foreach($recordset as $row){
+                                            echo "<option value='" . $row['name'] . "'>" . $row['name'] . "</option>";
+                                        }
+                                    ?>
+                                </select>
+                            </td>
+                            <td><input type="checkbox"/></td>
+                            <td><input type="submit" value="Assign"></button></td>
 
-                        $table="<table style='font-family: Arial, Helvetica, sans-serif;border-collapse: collapse;width: 100%;'><tr><th style='  border: 1px solid #ddd;
-                        padding: 8px;'>Name</th><th>Book Name</th><th>Issue Date</th><th>Return Date</th><th>Fine</th><th>Return</th></tr>";
 
-                        foreach($recordset as $row){
-                            $table.="<tr>";
-                            "<td>$row[0]</td>";
-                            "<td>$row[1]</td>";
-                            $table.="<td>$row[2]</td>";
-                            $table.="<td>$row[3]</td>";
-                            $table.="<td>$row[6]</td>";
-                            $table.="<td>$row[7]</td>";
-                            $table.="<td>$row[8]</td>";
-                            $table.="<td><a href='6user_service_dashboard.php?userlogid=$userloginid&returnid=$row[0]'><button type='button' class='btn btn-primary'>Return</button></a></td>";
-                            $table.="</tr>";
+                        </tr>
+                        <?php
+                            }
                         }
-                        $table.="</table>";
-                        echo $table;
-                    ?>
-                </div>       
-            </div>
-
-            <div class="rightinnerdiv">
-                <div id="return" class="innerright portion" style="<?php if(!empty($_REQUEST['returnid'])){ $returnid=$_REQUEST['returnid'];} else { echo "display:none"; }?>">
-                    <?php
-                        //$returnid=$_GET['returnid'];
-                        $obj= new data;
-                        $obj->setconnection();
-                        $obj->returnbook($returnid);
-                        $recordset=$obj->returnbook($returnid);
-                    ?>
+                        ?>
                 </div>
             </div>
 
-            <div class="rightinnerdiv">
-                <div id="reqbook" class="innerright portion" style="<?php if(!empty($_REQUEST['returnid'])){ $returnid=$_REQUEST['returnid']; echo "display:none";} else { echo "display:none";}?>">
-                    <button class="greenbtn">Request Book</button>
-                    <?php
-                       //$userloginid=$_SESSION["userid"] = $_GET['userlogid'];
-                       $obj= new data();
-                       $obj->setconnection();
-                       $obj->getbookissue();
-                       $recordset=$obj->getbookissue(); 
 
-                       $table="<table style='font-family: Arial, Helvetica, sans-serif;border-collapse: collapse;width: 100%;'><tr>
-                        <th>Image</th><th>Book Name</th><th>Book Authour</th><th>branch</th><th>price</th></th><th>Request Book</th></tr>";
 
-                       foreach($recordset as $row){
-                        $table.="<tr>";
-                        "<td>$row[0]</td>";
-                        $table.="<td><img src='uploads/$row[1]' width='100px' height='100px'></td>";
-                        $table.="<td>$row[2]</td>";
-                        $table.="<td>$row[4]</td>";
-                        $table.="<td>$row[7]</td>";
-                        $table.="<td>$row[8]</td>";
-                        $table.="<td><a href='13reqbook.php?userid=$userloginid&bookid=$row[0]'><button type='button' class='btn btn-primary'>REQUEST</button></a></td>";
-                        $table.="</tr>";
-                    }
-                    $table.="</table>";
-                    echo $table;          
-                    ?>
-                </div>
-            </div>
+
+
         </div>
     </div>
     <script>

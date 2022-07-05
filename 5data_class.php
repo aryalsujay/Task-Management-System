@@ -61,27 +61,55 @@ session_start();
                 }
 
         }
-        //Add task and taskdetail
+        //Add task and taskdetail in task table
+        //then split sub-tasks acc. to delimiter and store in different table
         function addtask($tname,$tdetail){
             $this->tname=$tname;
             $this->tdetail=$tdetail;
             $q="INSERT INTO task(id, tname, detail)VALUES('', '$tname', '$tdetail')";
             $this->connection->exec($q);
-            $q1="SELECT * FROM task";
+            /* $q1="SELECT * FROM task";
             $recordSet=$this->connection->query($q1);
             foreach($recordSet as $row){
                 $tid=$row['id'];
                 $t1=$row['detail'];
                 //t2,t3 .. to add after delimiter
             }
-            $q2="INSERT INTO tdetail(id, tid, t1, t2, t3)VALUES('', '$tid','$t1','','')";
-            if($this->connection->exec($q2)){
+            $q2="INSERT INTO tdetail(id, tid, t1, t2, t3)VALUES('', '$tid','$t1','','')"; */
+            /*$q3="Select id,name,detail, left(detail,charindex(',',detail)-1)as t1,
+            right(detail, len(detail)-charindex(',',detail)-2) as t3
+            from task";*/
+            //$q3="SELECT id, tname, detail, SUBSTRING_INDEX(detail, ',', 1) as t1,SUBSTRING_INDEX(SUBSTRING_INDEX(detail, ',', 2), ',', -1) as t2,SUBSTRING_INDEX(SUBSTRING_INDEX(detail, ',', 3), ',', -1) as t3 from task";
+            $q3="SELECT id, tname, detail, SUBSTRING_INDEX(detail, '\n', 1) as t1,SUBSTRING_INDEX(SUBSTRING_INDEX(detail, '\n', 2), '\n', -1) as t2,SUBSTRING_INDEX(SUBSTRING_INDEX(detail, '\n', 3), '\n', -1) as t3 from task";
+            /*$q3="SELECT id, detail, SPLIT_STR(detail, ' ', 1) as t1, SPLIT_STR(detail, ' ', 2) as t2 SPLIT_STR(detail, ' ', 3) as t3 FROM task";
+            $q1="CREATE FUNCTION SPLIT_STR(
+                x VARCHAR(255),
+                delim VARCHAR(12),
+                pos INT
+              )
+              RETURNS VARCHAR(255) DETERMINISTIC
+              BEGIN
+                  RETURN REPLACE(SUBSTRING(SUBSTRING_INDEX(x, delim, pos),
+                     LENGTH(SUBSTRING_INDEX(x, delim, pos -1)) + 1),
+                     delim, '\n');
+              END";
+            $recordSet=$this->connection->query($q1); */
+            $recordset=$this->connection->query($q3);
+            foreach($recordset as $rows){
+                $tid=$rows['id'];
+                $t1=$rows['t1'];
+                $t2=$rows['t2'];
+                $t3=$rows['t3'];
+            }
+            $q4="INSERT INTO tdetail(id,tid, t1, t2, t3)VALUES('','$tid','$t1','$t2','$t3')";
+            if($this->connection->exec($q4)){
                 header("Location:7admin_service_dashboard.php?msg=New task added");
             }
             else{
                 header("Location:7admin_service_dashboard.php?msg=Error");
             }
         }
+        //Add person Admin
         function addperson($name,$email,$pass,$type){
             $this->name=$name;
             $this->email=$email;
@@ -95,9 +123,15 @@ session_start();
                 header ("Location:7admin_service_dashboard.php?msg=Registration failed");
             }
         }
-
-        function issuereport(){
-            $q="SELECT * FROM issuebook ORDER BY id DESC";
+        //View Task as admin
+        function viewtask(){
+            $q="SELECT * FROM tdetail as td INNER JOIN task AS t ON td.tid=t.id ORDER BY td.id DESC";
+            $data=$this->connection->query($q);
+            return $data;
+        }
+        //Retrieve User
+        function studentrecord(){
+            $q="SELECT * FROM user";
             $data=$this->connection->query($q);
             return $data;
         }
