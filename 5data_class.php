@@ -125,13 +125,44 @@ session_start();
         }
         //View Task as admin
         function viewtask(){
-            $q="SELECT * FROM tdetail as td INNER JOIN task AS t ON td.tid=t.id ORDER BY td.id DESC";
+            $q="SELECT * FROM tdetail as td INNER JOIN task AS t ON td.tid=t.id ORDER BY td.id ASC";
             $data=$this->connection->query($q);
             return $data;
         }
         //Retrieve User
         function studentrecord(){
             $q="SELECT * FROM user";
+            $data=$this->connection->query($q);
+            return $data;
+        }
+        //Assign User a task
+        function assigntask($name,$tid){
+            $this->name=$name;
+            $this->tid=$tid;
+            $q1="SELECT * FROM user WHERE name='$name'";
+            $result=$this->connection->query($q1);
+            foreach($result as $row){
+                $uid=$row['id'];
+            }
+            $q2="SELECT * FROM tdetail WHERE tid='$tid'";
+            $result1=$this->connection->query($q2);
+            foreach($result1 as $row){
+                $tid=$row['tid'];
+            }
+            $q3="INSERT INTO log(id, tid, uid)VALUES('','$tid','$uid')";
+            $this->connection->exec($q3);
+            $q4="UPDATE tdetail SET uid='$uid' WHERE tid='$tid'";
+            if($this->connection->exec($q4)){
+                header("Location:7admin_service_dashboard.php?msg=Assigned");
+            }
+            else{
+                header ("Location:7admin_service_dashboard.php?msg=Failed");
+            }
+        }
+        //Check if user is assigned task or not
+        function isassigned($tid){
+            $this->tid=$tid;
+            $q="SELECT * FROM tdetail WHERE tid='$tid'";
             $data=$this->connection->query($q);
             return $data;
         }

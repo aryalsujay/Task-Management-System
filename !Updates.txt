@@ -20,9 +20,10 @@ a. Create a View where admin can see task and sub-tasks.
 -->Inner join both task and taskdetail(delimiter seperated table) and insert data into table accordingly.
 b. A checkbox beside every sub-task.
 -->Add in table: <input type="checkbox"/>
--->Check on how to submit when checked.
 c. User option beside every sub-task to select.
+-->Display user option using select and option tags.
 d. After any subtask is checked a assign button where user will be assigned a task.
+-->Add all table inside a form to take the values via _POST and update log along with tdetail table.
 
 3. View My Tasks
 User Dashboard::store user info in user tabel and assigned task in task detail table
