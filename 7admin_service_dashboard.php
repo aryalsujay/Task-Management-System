@@ -15,7 +15,7 @@ define("ROW_PER_PAGE",2);
       <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <link rel="stylesheet" href="!style.css">
     <!-- Load icon library -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<!--  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"> -->
 
     <title>Document</title>
 </head>
@@ -127,8 +127,8 @@ th{
             <div class="leftinnerdiv">
                 <Button class="greenbtn" onclick="openpart('search')">Search</Button>
                 <Button class="greenbtn" onclick="openpart('addtask')">Add task</Button>
+                <Button class="greenbtn" onclick="openpart('assigntask')">Assign Task</Button>
                 <Button class="greenbtn" onclick="openpart('viewtask')">View Task</Button>
-                <Button class="greenbtn" onclick="openpart('bookrequestapprove')">Book Request</Button>
                 <Button class="greenbtn" onclick="openpart('addperson')">Add Student</Button>
                 <Button class="greenbtn" onclick="openpart('studentrecord')">Student Record</Button>
                 <Button class="greenbtn" onclick="openpart('issuebook')">Issue Book</Button>
@@ -174,9 +174,9 @@ th{
                 </div>
             </div>
 
-            <!-- View Task template -->
+            <!-- Assign Task template -->
             <div class="rightinnerdiv">
-                <div id="viewtask" class="innerright portion" style="<?php if(!empty($_REQUEST['msg'])){$msg=$_REQUEST['msg'];}else{echo "display:none";}?>">
+                <div id="assigntask" class="innerright portion" style="display:none">
                     <button class="greenbtn">Assign Task</button>
                     <form action="9userviewtask.php" method="post" enctype="multipart/form-data">
                     <?php
@@ -196,7 +196,6 @@ th{
                                 <th class='table-header' width='10%'>User</th>
                                 <th class='table-header' width='10%'>Assign To</th>
                                 <th class='table-header' width='10%'>Assigned?</th>
-
                             </tr>
                         </thead>
                         <tbody id='table-body'>
@@ -209,6 +208,7 @@ th{
                                     <?php echo "<option value='" . $row['tid'] . "'>" . $row['tid'] . "</option>"; ?>
                                 </select>
                             </td>
+                            <?php $uid=$row['uid']; ?>
                             <td><?php echo $row['tname']; ?></td>
                             <td><?php echo $row['t1']; ?></td>
                             <td><?php echo $row['t2']; ?></td>
@@ -220,6 +220,7 @@ th{
                                         $obj->setconnection();
                                         $obj->studentrecord();
                                         $recordset=$obj->studentrecord();
+                                        echo "<option>Select</option>";
                                         foreach($recordset as $row){
                                             echo "<option value='" . $row['name'] . "'>" . $row['name'] . "</option>";
                                         }
@@ -228,30 +229,68 @@ th{
                             </td>
 
                             <td><button type='btn btn-primary' value='submit'>ASSIGN</button></td>
-
+                            </form>
                             <td><?php
-
-                                    if(!empty($msg)){
+                                    if($uid!='0'){
                                         echo "ASSIGNED";
                                     }
                                     else{
-                                        $obj=new data();
-                                        $obj->setconnection();
-                                        $obj->isassigned($tid);
-                                        $record=$obj->isassigned($tid);
-                                        foreach($record as $row){
-                                            $uid=$row['uid'];
-                                        }
-                                        if($uid!='0'){
-                                            echo "ASSIGNED";
-                                        }
-                                        else{
-                                            echo "NOT ASSIGNED";
-                                        }
+                                        echo "NOT ASSIGNED";
                                     }
-                                ?>
+                                 ?>
                             </td>
-                            </form>
+                        </tr>
+                        <?php
+                            }
+                        }
+                        ?>
+                </div>
+            </div>
+
+            <!-- View Task template -->
+            <div class="rightinnerdiv">
+                <div id="viewtask" class="innerright portion" style="display:none">
+                    <button class="greenbtn">View Task</button>
+                    <?php
+                        $u= new data;
+                        $u->setconnection();
+                        $u->viewtask();
+                        $result=$u->viewtask();
+                    ?>
+                        <table class='tbl-qa'>
+                        <thead>
+                            <tr>
+                                <th class='table-header' width='5%'>S.No.</th>
+                                <th class='table-header' width='15%'>Task</th>
+                                <th class='table-header' width='25%'>Sub-Task 1</th>
+                                <th class='table-header' width='25%'>Sub-Task 2</th>
+                                <th class='table-header' width='25%'>Sub-Task 3</th>
+                                <th class='table-header' width='10%'>Assigned To?</th>
+                            </tr>
+                        </thead>
+                        <tbody id='table-body'>
+                        <?php
+                        if(!empty($result)) {
+                            foreach($result as $row) {
+                        ?>
+                        <tr class='table-row'>
+                            <?php $uid=$row['uid']; ?>
+                            <td><?php echo $row['tid']; ?></td>
+                            <td><?php echo $row['tname']; ?></td>
+                            <td><?php echo $row['t1']; ?></td>
+                            <td><?php echo $row['t2']; ?></td>
+                            <td><?php echo $row['t3']; ?></td>
+                            <td><?php
+                                $obj=new data();
+                                $obj->setconnection();
+                                $obj->userassigned($uid);
+                                $record=$obj->userassigned($uid);
+                                foreach($record as $row){
+                                    $uname=$row['name'];
+                                }
+                                echo $uname; ?>
+                            </td>
+
                         </tr>
                         <?php
                             }
@@ -261,8 +300,6 @@ th{
 
                 </div>
             </div>
-
-
 
         </div>
     </div>

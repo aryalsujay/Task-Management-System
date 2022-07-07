@@ -159,10 +159,10 @@ session_start();
                 header ("Location:7admin_service_dashboard.php?msg=Failed");
             }
         }
-        //Check if user is assigned task or not
-        function isassigned($tid){
-            $this->tid=$tid;
-            $q="SELECT * FROM tdetail WHERE tid='$tid'";
+        //Retrieve which user is assigned a task
+        function userassigned($uid){
+            $this->uid=$uid;
+            $q="SELECT * FROM user WHERE id='$uid'";
             $data=$this->connection->query($q);
             return $data;
         }

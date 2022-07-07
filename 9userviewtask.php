@@ -4,6 +4,5 @@
     $obj=new data();
     $obj->setconnection();
     $obj->assigntask($name,$tid);
-    $obj->isassigned($tid);
 
 ?>
