@@ -38,6 +38,21 @@ session_start();
 
         //Admin
 
+        //Add User
+        function adduser($name,$email,$pass,$type){
+            $this->name=$name;
+            $this->email=$email;
+            $this->pass=$pass;
+            $this->type=$type;
+                $q="INSERT INTO user(id, name, email, pass, type)VALUES('', '$name', '$email', '$pass', '$type')";
+                if($this->connection->exec($q)){
+                    header("Location:7admin_service_dashboard.php?msg=user added");
+                }
+                else{
+                    header("Location:7admin_service_dashboard.php?msg=user_add failed");
+                }
+        }
+
         //Admin login for admin dashboard
         function adminLogin($t1,$t2){
 
@@ -122,6 +137,7 @@ session_start();
             else{
                 header ("Location:7admin_service_dashboard.php?msg=Registration failed");
             }
+
         }
         //View Task as admin
         function viewtask(){
@@ -148,16 +164,29 @@ session_start();
             $result1=$this->connection->query($q2);
             foreach($result1 as $row){
                 $tid=$row['tid'];
+                $aid=$row['assigned'];
+                $q3="INSERT INTO log(id, tid, uid)VALUES('','$tid','$uid')";
+                $this->connection->exec($q3);
             }
-            $q3="INSERT INTO log(id, tid, uid)VALUES('','$tid','$uid')";
-            $this->connection->exec($q3);
-            $q4="UPDATE tdetail SET uid='$uid' WHERE tid='$tid'";
-            if($this->connection->exec($q4)){
-                header("Location:7admin_service_dashboard.php?msg=Assigned");
+            if($aid!='0'){
+                $q4="UPDATE tdetail SET uid='$uid', assigned='1' WHERE tid='$tid'";
+                if($this->connection->exec($q4)){
+                    header("Location:7admin_service_dashboard.php?msg=Assigned");
+                }
+                else{
+                    header ("Location:7admin_service_dashboard.php?msg=Failed");
+                }
             }
             else{
-                header ("Location:7admin_service_dashboard.php?msg=Failed");
+                $q5="UPDATE tdetail SET uid='$uid', WHERE tid='$tid'";
+                if($this->connection->exec($q5)){
+                    header("Location:7admin_service_dashboard.php?msg=Updated");
+                }
+                else{
+                    header ("Location:7admin_service_dashboard.php?msg=Updation Failed");
+                }
             }
+
         }
         //Retrieve which user is assigned a task
         function userassigned($uid){

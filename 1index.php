@@ -44,7 +44,7 @@
         <div class="row"><h4><?php echo $msg?></h4></div>
         <div class="row">
             <div class="col-md-6 login1">
-            <h3>Savaka</h3>
+            <h3>User</h3>
                 <form action="2login_server_page.php" method="get">
                     <div class="form-group">
                         <input type="text" class="form-control" name="email" value="" placeholder="Enter Email"/>
@@ -61,7 +61,7 @@
                 </form>
             </div>
             <div class="col-md-6 login2">
-            <h3>Maha Savaka</h3>
+            <h3>Admin</h3>
                 <form action="3loginadmin_server_page.php" method="get">
                     <div class="form-group">
                         <input type="text" class="form-control" name="ademail" value="" placeholder="Enter Email"/>

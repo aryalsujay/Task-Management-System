@@ -15,7 +15,7 @@ define("ROW_PER_PAGE",2);
       <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <link rel="stylesheet" href="!style.css">
     <!-- Load icon library -->
-<!--  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"> -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
     <title>Document</title>
 </head>
@@ -36,11 +36,11 @@ define("ROW_PER_PAGE",2);
 }
 .leftinnerdiv{
     float: left;
-    width: 25%;
+    width: 20%;
 }
 .rightinnerdiv{
     float: right;
-    width: 75%;
+    width: 80%;
 }
 .greenbtn{
     background-color: greenyellow;
@@ -128,9 +128,8 @@ th{
                 <Button class="greenbtn" onclick="openpart('search')">Search</Button>
                 <Button class="greenbtn" onclick="openpart('addtask')">Add task</Button>
                 <Button class="greenbtn" onclick="openpart('assigntask')">Assign Task</Button>
-                <Button class="greenbtn" onclick="openpart('viewtask')">View Task</Button>
-                <Button class="greenbtn" onclick="openpart('addperson')">Add Student</Button>
-                <Button class="greenbtn" onclick="openpart('studentrecord')">Student Record</Button>
+                <Button class="greenbtn" onclick="openpart('addusr')">Add User</Button>
+                <Button class="greenbtn" onclick="openpart('assignstask')">Assign Sub-Task</Button>
                 <Button class="greenbtn" onclick="openpart('issuebook')">Issue Book</Button>
                 <Button class="greenbtn" onclick="openpart('issuebookreport')">Issue Book Report</Button>
                 <a href="1index.php"><Button class="greenbtn">Logout</Button></a>
@@ -154,19 +153,20 @@ th{
 
             <!-- Add User-->
             <div class="rightinnerdiv">
-                <div id="addperson" class="innerright portion" style="display:none">
-                    <Button class="greenbtn">Add Person</Button>
-                    <form action="8addperson_server_page.php" method="post" enctype="multipart/form-data">
+                <div id="addusr" class="innerright portion" style="display:none">
+                    <Button class="greenbtn">Add User</Button>
+                    <form action="10adduser.php" method="post" enctype="multipart/form-data">
                         <label>Name: </label><input type="text"  name="addname"/>
                         <br>
                         <label>Email: </label><input type="email"  name="addemail"/>
                         <br>
                         <label>Password: </label><input type="password"  name="addpass"/>
                         <br>
-                        <label for="type">Type: </label>
+                        <label>Type: </label>
                         <select name="type" >
-                            <option id="Student">Student</option>
-                            <option id="Teacher">Teacher</option>
+                            <option id="Member">Member</option>
+                            <option id="Admin">Admin</option>
+                            <option id="Manager">Manager</option>
                         </select>
                         <br>
                         <input type="submit" class="btn-primary" value="Submit"/>
@@ -174,11 +174,187 @@ th{
                 </div>
             </div>
 
+             <!-- Assign Sub-Task template -->
+             <div class="rightinnerdiv">
+                <div id="assignstask" class="innerright portion" style="display:none">
+                    <button class="greenbtn">Assign Sub-Task</button>
+                    <?php
+                        $u= new data;
+                        $u->setconnection();
+                        $u->viewtask();
+                        $result=$u->viewtask();
+                    ?>
+                    <table class='tbl-qa'>
+                        <thead>
+                            <tr>
+                                <th class='table-header' width='5%'>S.No.</th>
+                                <th class='table-header' width='15%'>Task</th>
+                                <th class='table-header' width='25%'>Sub-Tasks</th>
+                                <th class='table-header' width='10%'>User</th>
+                                <th class='table-header' width='10%'>Status</th>
+                                <th class='table-header' width='10%'>Assign To</th>
+                            </tr>
+                        </thead>
+                        <tbody id='table-body'>
+                        <?php
+                        if(!empty($result)) {
+                            foreach($result as $row) {
+                        ?>
+                        <form action="9userviewtask.php" method="post" enctype="multipart/form-data">
+                        <tr class='table-row'>
+                            <td><select name="id">
+                                    <?php echo "<option value='" . $row['tid'] . "'>" . $row['tid'] . "</option>"; ?>
+                                </select>
+                            </td>
+                            <?php $uid=$row['uid']; ?>
+                            <td><?php echo $row['tname']; ?></td>
+                            <td><?php echo $row['t1']; ?></td>
+                            <td>
+                                <select name="name">
+                                    <?php
+                                        $obj=new data();
+                                        $obj->setconnection();
+                                        $obj->studentrecord();
+                                        $recordset=$obj->studentrecord();
+                                        echo "<option>Select</option>";
+                                        foreach($recordset as $row){
+                                            echo "<option value='" . $row['name'] . "'>" . $row['name'] . "</option>";
+                                        }
+                                    ?>
+                                </select>
+                            </td>
+                            <td><?php
+                                    $obj=new data();
+                                    $obj->setconnection();
+                                    $obj->userassigned($uid);
+                                    $record=$obj->userassigned($uid);
+                                    foreach($record as $row){
+                                        $uname=$row['name'];
+                                    }
+                                    if($uid!='0'){
+                                        echo "Assigned To " . "$uname";
+                                    }
+                                    else{
+                                        echo "Not Assigned";
+                                    }
+                                ?>
+                            </td>
+                            <td><button type='btn btn-primary' value='submit'>ASSIGN</button></td>
+                            <?php
+                            }
+                        }
+                        ?>
+                        </tr>
+                        <tr>
+                            <td><?php echo " "; ?></td>
+                            <td><?php echo " "; ?></td>
+                            <td><?php
+                                $u= new data;
+                                $u->setconnection();
+                                $u->viewtask();
+                                $result=$u->viewtask();
+                                if(!empty($result)) {
+                                    foreach($result as $row) {
+                                echo $row['t2']; ?>
+                            </td>
+                            <td>
+                                <select name="name">
+                                    <?php
+                                        $obj=new data();
+                                        $obj->setconnection();
+                                        $obj->studentrecord();
+                                        $recordset=$obj->studentrecord();
+                                        echo "<option>Select</option>";
+                                        foreach($recordset as $row){
+                                            echo "<option value='" . $row['name'] . "'>" . $row['name'] . "</option>";
+                                        }
+                                    ?>
+                                </select>
+                            </td>
+                            <td><?php
+                                    $obj=new data();
+                                    $obj->setconnection();
+                                    $obj->userassigned($uid);
+                                    $record=$obj->userassigned($uid);
+                                    foreach($record as $row){
+                                        $uname=$row['name'];
+                                    }
+                                    if($uid!='0'){
+                                        echo "Assigned To " . "$uname";
+                                    }
+                                    else{
+                                        echo "Not Assigned";
+                                    }
+                                ?>
+                            </td>
+                            <td><button type='btn btn-primary' value='submit'>ASSIGN</button></td>
+                            <?php
+                            }
+                        }
+                        ?>
+                        </tr>
+                        <tr>
+                            <td><?php echo " "; ?></td>
+                            <td><?php echo " "; ?></td>
+                            <td><?php
+                                $u= new data;
+                                $u->setconnection();
+                                $u->viewtask();
+                                $result=$u->viewtask();
+                                if(!empty($result)) {
+                                    foreach($result as $row) {
+                                echo $row['t3']; ?>
+                            </td>
+                            <td>
+                                <select name="name">
+                                    <?php
+                                        $obj=new data();
+                                        $obj->setconnection();
+                                        $obj->studentrecord();
+                                        $recordset=$obj->studentrecord();
+                                        echo "<option>Select</option>";
+                                        foreach($recordset as $row){
+                                            echo "<option value='" . $row['name'] . "'>" . $row['name'] . "</option>";
+                                        }
+                                    ?>
+                                </select>
+                            </td>
+                            <td><?php
+                                    $obj=new data();
+                                    $obj->setconnection();
+                                    $obj->userassigned($uid);
+                                    $record=$obj->userassigned($uid);
+                                    foreach($record as $row){
+                                        $uname=$row['name'];
+                                    }
+                                    if($uid!='0'){
+                                        echo "Assigned To " . "$uname";
+                                    }
+                                    else{
+                                        echo "Not Assigned";
+                                    }
+                                ?>
+                            </td>
+                            <td><button type='btn btn-primary' value='submit'>ASSIGN</button></td>
+                            <?php
+                            }
+                        }
+                        ?>
+                            </tr>
+                            <td><button type='btn btn-primary' value='submit'>ASSIGN</button></td>
+                        </tr>
+                        </form>
+
+
+
+                </div>
+            </div>
+
             <!-- Assign Task template -->
             <div class="rightinnerdiv">
                 <div id="assigntask" class="innerright portion" style="display:none">
                     <button class="greenbtn">Assign Task</button>
-                    <form action="9userviewtask.php" method="post" enctype="multipart/form-data">
+
                     <?php
                         $u= new data;
                         $u->setconnection();
@@ -194,15 +370,17 @@ th{
                                 <th class='table-header' width='25%'>Sub-Task 2</th>
                                 <th class='table-header' width='25%'>Sub-Task 3</th>
                                 <th class='table-header' width='10%'>User</th>
+                                <th class='table-header' width='10%'>Status</th>
                                 <th class='table-header' width='10%'>Assign To</th>
-                                <th class='table-header' width='10%'>Assigned?</th>
                             </tr>
                         </thead>
                         <tbody id='table-body'>
+
                         <?php
                         if(!empty($result)) {
                             foreach($result as $row) {
                         ?>
+                        <form action="9userviewtask.php" method="post" enctype="multipart/form-data">
                         <tr class='table-row'>
                             <td><select name="id">
                                     <?php echo "<option value='" . $row['tid'] . "'>" . $row['tid'] . "</option>"; ?>
@@ -227,77 +405,29 @@ th{
                                     ?>
                                 </select>
                             </td>
-
-                            <td><button type='btn btn-primary' value='submit'>ASSIGN</button></td>
-                            </form>
                             <td><?php
+                                    $obj=new data();
+                                    $obj->setconnection();
+                                    $obj->userassigned($uid);
+                                    $record=$obj->userassigned($uid);
+                                    foreach($record as $row){
+                                        $uname=$row['name'];
+                                    }
                                     if($uid!='0'){
-                                        echo "ASSIGNED";
+                                        echo "Assigned To " . "$uname";
                                     }
                                     else{
-                                        echo "NOT ASSIGNED";
+                                        echo "Not Assigned";
                                     }
-                                 ?>
+                                ?>
                             </td>
+                            <td><button type='btn btn-primary' value='submit'>ASSIGN</button></td>
                         </tr>
+                        </form>
                         <?php
                             }
                         }
                         ?>
-                </div>
-            </div>
-
-            <!-- View Task template -->
-            <div class="rightinnerdiv">
-                <div id="viewtask" class="innerright portion" style="display:none">
-                    <button class="greenbtn">View Task</button>
-                    <?php
-                        $u= new data;
-                        $u->setconnection();
-                        $u->viewtask();
-                        $result=$u->viewtask();
-                    ?>
-                        <table class='tbl-qa'>
-                        <thead>
-                            <tr>
-                                <th class='table-header' width='5%'>S.No.</th>
-                                <th class='table-header' width='15%'>Task</th>
-                                <th class='table-header' width='25%'>Sub-Task 1</th>
-                                <th class='table-header' width='25%'>Sub-Task 2</th>
-                                <th class='table-header' width='25%'>Sub-Task 3</th>
-                                <th class='table-header' width='10%'>Assigned To?</th>
-                            </tr>
-                        </thead>
-                        <tbody id='table-body'>
-                        <?php
-                        if(!empty($result)) {
-                            foreach($result as $row) {
-                        ?>
-                        <tr class='table-row'>
-                            <?php $uid=$row['uid']; ?>
-                            <td><?php echo $row['tid']; ?></td>
-                            <td><?php echo $row['tname']; ?></td>
-                            <td><?php echo $row['t1']; ?></td>
-                            <td><?php echo $row['t2']; ?></td>
-                            <td><?php echo $row['t3']; ?></td>
-                            <td><?php
-                                $obj=new data();
-                                $obj->setconnection();
-                                $obj->userassigned($uid);
-                                $record=$obj->userassigned($uid);
-                                foreach($record as $row){
-                                    $uname=$row['name'];
-                                }
-                                echo $uname; ?>
-                            </td>
-
-                        </tr>
-                        <?php
-                            }
-                        }
-                        ?>
-
-
                 </div>
             </div>
 

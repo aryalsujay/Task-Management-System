@@ -24,6 +24,7 @@ c. User option beside every sub-task to select.
 -->Display user option using select and option tags.
 d. After any subtask is checked a assign button where user will be assigned a task.
 -->Add all table inside a form to take the values via _POST and update log along with tdetail table.
+-->Take uid, retrieve username, and display if task is assigned.
 
 3. View My Tasks
 User Dashboard::store user info in user tabel and assigned task in task detail table
