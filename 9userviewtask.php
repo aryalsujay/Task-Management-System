@@ -1,8 +1,9 @@
 <?php include "5data_class.php";
     $name=$_POST['name'];
-    $tid=$_POST['id'];
+    $stid=$_POST['stid'];
+    //$stid=$_POST['stid'];
     $obj=new data();
     $obj->setconnection();
-    $obj->assigntask($name,$tid);
+    $obj->assignstask($name,$stid);
 
 ?>

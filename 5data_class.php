@@ -115,8 +115,17 @@ session_start();
                 $t1=$rows['t1'];
                 $t2=$rows['t2'];
                 $t3=$rows['t3'];
+                $stid1=$tid . '1';
+                $stid2=$tid . '2';
+                $stid3=$tid . '3';
             }
             $q4="INSERT INTO tdetail(id,tid, t1, t2, t3)VALUES('','$tid','$t1','$t2','$t3')";
+            $q5="INSERT INTO trows(id,tid,stid, t1, t2, t3)VALUES('','$tid','$stid1','$t1','','')";
+            $q6="INSERT INTO trows(id,tid,stid, t1, t2, t3)VALUES('','$tid','$stid2','','$t2','')";
+            $q7="INSERT INTO trows(id,tid,stid, t1, t2, t3)VALUES('','$tid','$stid3','','','$t3')";
+            $this->connection->exec($q5);
+            $this->connection->exec($q6);
+            $this->connection->exec($q7);
             if($this->connection->exec($q4)){
                 header("Location:7admin_service_dashboard.php?msg=New task added");
             }
@@ -139,9 +148,22 @@ session_start();
             }
 
         }
+        //Fetch Taskname
+        function taskname($tid){
+            $this->tid=$tid;
+            $q="SELECT * FROM task where id='$tid'";
+            $data=$this->connection->query($q);
+            return $data;
+        }
         //View Task as admin
         function viewtask(){
             $q="SELECT * FROM tdetail as td INNER JOIN task AS t ON td.tid=t.id ORDER BY td.id ASC";
+            $data=$this->connection->query($q);
+            return $data;
+        }
+        //View sTask as admin
+        function viewstask(){
+            $q="SELECT * FROM trows ORDER BY id ASC";
             $data=$this->connection->query($q);
             return $data;
         }
@@ -168,7 +190,6 @@ session_start();
                 $q3="INSERT INTO log(id, tid, uid)VALUES('','$tid','$uid')";
                 $this->connection->exec($q3);
             }
-            if($aid!='0'){
                 $q4="UPDATE tdetail SET uid='$uid', assigned='1' WHERE tid='$tid'";
                 if($this->connection->exec($q4)){
                     header("Location:7admin_service_dashboard.php?msg=Assigned");
@@ -176,16 +197,37 @@ session_start();
                 else{
                     header ("Location:7admin_service_dashboard.php?msg=Failed");
                 }
+
+        }
+        //Assign User a sub-task
+        function assignstask($name,$stid){
+            $this->name=$name;
+            $this->stid=$stid;
+            //comment stid to check for all tasks assign
+            //$this->stid=$stid;
+            $q1="SELECT * FROM user WHERE name='$name'";
+            $result=$this->connection->query($q1);
+            foreach($result as $row){
+                $uid=$row['id'];
             }
-            else{
-                $q5="UPDATE tdetail SET uid='$uid', WHERE tid='$tid'";
-                if($this->connection->exec($q5)){
-                    header("Location:7admin_service_dashboard.php?msg=Updated");
+            $q2="SELECT * FROM trows WHERE stid='$stid'";
+            $result1=$this->connection->query($q2);
+            foreach($result1 as $row){
+                $stid=$row['stid'];
+                $tid=$row['tid'];
+
+            }
+                //$aid=$row['assigned'];
+                $q3="INSERT INTO log(id, tid,stid,uid)VALUES('','$tid','$stid','$uid')";
+                $this->connection->exec($q3);
+
+                $q4="UPDATE trows SET uid='$uid' WHERE tid='$tid' AND stid='$stid'";
+                if($this->connection->exec($q4)){
+                    header("Location:7admin_service_dashboard.php?msg=Assigned");
                 }
                 else{
-                    header ("Location:7admin_service_dashboard.php?msg=Updation Failed");
+                    header ("Location:7admin_service_dashboard.php?msg=Failed");
                 }
-            }
 
         }
         //Retrieve which user is assigned a task
