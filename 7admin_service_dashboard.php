@@ -202,8 +202,8 @@ th{
                         ?>
                         <form action="9userviewtask.php" method="post" enctype="multipart/form-data">
                         <tr class='table-row'>
-                            <td><select name="stid">
-
+                            <td> <input type="checkbox"/>;
+                                <select name="stid">
                                     <?php echo "<option value='" . $row['stid'] . "'>" . $row['stid'] . "</option>"; ?>
                                 </select>
                             </td>
@@ -233,7 +233,7 @@ th{
                                             $tname=$row['tname'];
                                         }
                                         echo $tname;
-                                }
+                                    }
                                 ?>
                             </td>
                             <td><?php if(empty($row['t1'])){

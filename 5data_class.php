@@ -35,7 +35,12 @@ session_start();
             $data=$this->connection->query($q);
             return $data;
         }
-
+        //View Assigned Tasks
+        function assignedtask($uid){
+            $q="SELECT * FROM trows where uid='$uid'";
+            $data=$this->connection->query($q);
+            return $data;
+        }
         //Admin
 
         //Add User

@@ -17,6 +17,9 @@
     <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
       <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
       <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+      <link rel="stylesheet" href="!style.css">
+    <!-- Load icon library -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
     <title>Document</title>
 </head>
@@ -69,12 +72,12 @@
     //include "5data_class.php"; ?>
     <div class="container">
         <div class="innerdiv">
-            <div class="row"><img class="imglogo" src="images/logo.PNG"/></div>
+            <div class="row"><img class="imglogo" src="images/tm.png"/></div>
 
             <div class="leftinnerdiv">
                 <button class="greenbtn">Welcome</button>
                 <button class="greenbtn" onclick="openpart('myaccount')">My Account</button>
-                <button class="greenbtn" onclick="openpart('assigntask')">Assigned Task</button>
+                <button class="greenbtn" onclick="openpart('assignedtask')">Assigned Task</button>
                 <button class="greenbtn" onclick="openpart('bookreport')">Book Report</button>
                 <a href="1index.php"><button class="greenbtn">LOGOUT</button></a>
             </div>
@@ -102,55 +105,77 @@
             </div>
 
             <div class="rightinnerdiv">
-                <div id="assigntask" class="innerright portion" style="display:none">
+                <div id="assignedtask" class="innerright portion" style="display:none">
                     <button class="greenbtn">View Task</button>
+                    <form action="11usertask.php" method="post" enctype="multipart/form-data">
                     <?php
-                        $u= new data;
-                        $u->setconnection();
-                        $u->viewtask();
-                        $result=$u->viewtask();
+                            $userloginid=$_GET['userlogid'];
+                            $u= new data;
+                            $u->setconnection();
+                            $u->assignedtask($userloginid);
+                            $rec=$u->assignedtask($userloginid);
                     ?>
                         <table class='tbl-qa'>
                         <thead>
                             <tr>
-                                <th class='table-header' width='20%'>Task</th>
-                                <th class='table-header' width='40%'>Sub-Task 1</th>
-                                <th class='table-header' width='20%'>Sub-Task 2</th>
-                                <th class='table-header' width='20%'>Sub-Task 3</th>
-                                <th class='table-header' width='20%'>User</th>
-                                <th class='table-header' width='20%'>Checkbox</th>
-                                <th class='table-header' width='20%'>Assign To</th>
-
+                                <th class='table-header' width='20%'>TaskName</th>
+                                <th class='table-header' width='50%'>Task Assigned</th>
+                                <th class='table-header' width='30%'>Status</th>
+                                <th class='table-header' width='15%'>Submit?</th>
                             </tr>
                         </thead>
                         <tbody id='table-body'>
                         <?php
-                        if(!empty($result)) {
-                            foreach($result as $row) {
+                        if(!empty($rec)) {
+                            foreach($rec as $row) {                           
                         ?>
                         <tr class='table-row'>
-                            <td><?php echo $row['tname']; ?></td>
-                            <td><?php echo $row['t1']; ?></td>
-                            <td><?php echo $row['t2']; ?></td>
-                            <td><?php echo $row['t3']; ?></td>
-                            <td>
-                                <select name="name">
-                                    <?php
-                                        $obj=new data();
-                                        $obj->setconnection();
-                                        $obj->studentrecord();
-                                        $recordset=$obj->studentrecord();
+                            <?php $tid=$row['tid']; $stid=$row['stid'];
+                                if(empty($row['t1'])){
+                                    if(!empty($row['t2'])){
+                                        $t2=$row['t2'];
+                                    }
+                                    else{
+                                        $t3=$row['t3'];
+                                    }
+                                }
+                                else{
+                                    $t1=$row['t1'];
+                                }
+                            ?>
+                            <td><?php
+                                    $obj=new data();
+                                    $obj->setconnection();
+                                    $obj->taskname($tid);
+                                    $recordset=$obj->taskname($tid);
                                         foreach($recordset as $row){
-                                            echo "<option value='" . $row['name'] . "'>" . $row['name'] . "</option>";
+                                            $tname=$row['tname'];
                                         }
-                                    ?>
+                                        echo $tname;
+                               ?>
+                            </td>
+                            <td>
+                                <?php
+                                    if($stid % 10==1){ 
+                                        echo $t1;
+                                    }
+                                    elseif($stid % 10==2){ 
+                                        echo $t2;
+                                    }
+                                    else{
+                                        echo $t3;
+                                    }
+                                ?>
+                            </td>
+                            <td><select name="status">
+                                    <option id="Select">Select</option>
+                                    <option id="Completed">Completed</option>
+                                    <option id="Need Clarification">Need Clarification</option>
                                 </select>
                             </td>
-                            <td><input type="checkbox"/></td>
-                            <td><input type="submit" value="Assign"></button></td>
-
-
+                            <td><input type="submit" value="Submit"></button></td>
                         </tr>
+                        </form>
                         <?php
                             }
                         }
