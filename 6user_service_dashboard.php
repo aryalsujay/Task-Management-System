@@ -119,6 +119,7 @@
                         <table class='tbl-qa'>
                         <thead>
                             <tr>
+
                                 <th class='table-header' width='2%'></th>
                                 <th class='table-header' width='20%'>TaskName</th>
                                 <th class='table-header' width='35%'>Task Assigned</th>
@@ -126,12 +127,14 @@
                                 <th class='table-header' width='15%'>Note</th>
                                 <th class='table-header' width='10%'>Submit?</th>
                                 <th class='table-header' width='10%'>Status</th>
+
                             </tr>
                         </thead>
                         <tbody id='table-body'>
                         <?php
                         if(!empty($rec)) {
                             foreach($rec as $row) {
+
                         ?>
                         <form action="11usertask.php" method="post" enctype="multipart/form-data">
                         <tr class='table-row'>
@@ -173,10 +176,12 @@
                             </td>
                             <td>
                                 <?php
+
                                     if($stid % 10==1){
                                         echo $t1;
                                     }
                                     elseif($stid % 10==2){
+
                                         echo $t2;
                                     }
                                     else{
@@ -184,6 +189,7 @@
                                     }
                                 ?>
                             </td>
+
                             <td><!-- onchange="yesnoCheck(this);" -->
                                 <select name="status">
                                     <option value="Select">Select</option>

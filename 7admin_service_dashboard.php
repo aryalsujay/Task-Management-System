@@ -210,7 +210,7 @@ th{
                         ?>
                         <form action="9userviewtask.php" method="post" enctype="multipart/form-data">
                         <tr class='table-row'>
-                            <td> <input type="checkbox"/>
+                            <td> <input type="checkbox"/>;
                                 <select name="stid">
                                     <?php echo "<option value='" . $row['stid'] . "'>" . $row['stid'] . "</option>"; ?>
                                 </select>
