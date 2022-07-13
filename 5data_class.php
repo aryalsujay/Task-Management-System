@@ -49,6 +49,7 @@ session_start();
             return $data;
         }
         //Fill status of the task with note if needed
+        //Resolved
         function taskstatus($stid,$status,$uid,$note){
             $this->stid=$stid;
             $this->status=$status;

@@ -174,6 +174,7 @@ th{
             </div>
 
             <!-- Clarification-->
+
             <div class="rightinnerdiv">
                 <div id="clarification" class="innerright portion" style="display:none">
                     <Button class="greenbtn">Clarification</Button>
@@ -186,7 +187,7 @@ th{
                 <div id="assignstask" class="innerright portion" style="display:none">
                     <button class="greenbtn">Assign Sub-Task</button>
                     <form action="9userviewtask.php" method="post" enctype="multipart/form-data">
-                    <?php
+                    <?php //Resolved
                             $u= new data;
                             $u->setconnection();
                             $u->viewstask();

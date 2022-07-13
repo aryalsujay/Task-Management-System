@@ -205,7 +205,7 @@
                             </td>
 
                             <td><input class="btn primary" type="submit" value="Submit"></button></td>
-                            <td><?php
+                            <td><?php //Resolved
                                     $obj=new data();
                                     $obj->setconnection();
                                     $obj->status($stid);
