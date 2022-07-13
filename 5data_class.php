@@ -35,7 +35,54 @@ session_start();
             $data=$this->connection->query($q);
             return $data;
         }
+        //View Assigned Tasks
+        function assignedtask($uid){
+            $q="SELECT * FROM trows where uid='$uid'";
+            $data=$this->connection->query($q);
+            return $data;
+        }
+        //Fetch status of task
+        function status($stid){
+            $q="SELECT * FROM trows where stid='$stid'";
+            $data=$this->connection->query($q);
+            return $data;
+        }
+        //Fill status of the task with note if needed
+        function taskstatus($stid,$status,$uid,$note){
+            $this->stid=$stid;
+            $this->status=$status;
+            $this->uid=$uid;
+            $this->note=$note;
+            $q1="SELECT * FROM trows WHERE stid='$stid'";
+            $rec1=$this->connection->query($q1);
+            foreach($rec1 as $row){
+                $tid=$row['tid'];
+            }
+            if($status=='Completed'){
+                $q2="UPDATE trows SET status='$status',note='$note' WHERE stid='$stid'";
+                if($this->connection->exec($q2)){
+                    $q3="INSERT INTO log(id, tid, stid, uid, note, done)VALUES('','$tid','$stid','$uid','$status','1')";
+                    $this->connection->exec($q3);
+                    header("Location:6user_service_dashboard.php?userlogid=$uid&msg=Task_Completed");
+                }
+                else{
+                    header("Location:6user_service_dashboard.php?userlogid=$uid&msg=Failed");
+                }
+            }
+            else{
+                $q2="UPDATE trows SET status='$status',note='$note' WHERE stid='$stid'";
+                if($this->connection->exec($q2)){
+                    $q3="INSERT INTO log(id, tid, stid, uid, note, done)VALUES('','$tid','$stid','$uid','$status','0')";
+                    $this->connection->exec($q3);
+                    header("Location:6user_service_dashboard.php?userlogid=$uid&msg=Need_Clarification");
+                }
+                else{
+                    header("Location:6user_service_dashboard.php?userlogid=$uid&msg=Failed");
+                }
+            }
 
+
+        }
         //Admin
 
         //Add User
@@ -120,9 +167,9 @@ session_start();
                 $stid3=$tid . '3';
             }
             $q4="INSERT INTO tdetail(id,tid, t1, t2, t3)VALUES('','$tid','$t1','$t2','$t3')";
-            $q5="INSERT INTO trows(id,tid,stid, t1, t2, t3)VALUES('','$tid','$stid1','$t1','','')";
-            $q6="INSERT INTO trows(id,tid,stid, t1, t2, t3)VALUES('','$tid','$stid2','','$t2','')";
-            $q7="INSERT INTO trows(id,tid,stid, t1, t2, t3)VALUES('','$tid','$stid3','','','$t3')";
+            $q5="INSERT INTO trows(id,tid,stid,uid,status,t1,t2,t3,note)VALUES('','$tid','$stid1','','','$t1','','')";
+            $q6="INSERT INTO trows(id,tid,stid,uid,status,t1,t2,t3,note)VALUES('','$tid','$stid2','','','','$t2','')";
+            $q7="INSERT INTO trows(id,tid,stid,uid,status,t1,t2,t3,note)VALUES('','$tid','$stid3','','','','','$t3')";
             $this->connection->exec($q5);
             $this->connection->exec($q6);
             $this->connection->exec($q7);
@@ -218,7 +265,7 @@ session_start();
 
             }
                 //$aid=$row['assigned'];
-                $q3="INSERT INTO log(id, tid,stid,uid)VALUES('','$tid','$stid','$uid')";
+                $q3="INSERT INTO log(id, tid,stid,uid,note)VALUES('','$tid','$stid','$uid','')";
                 $this->connection->exec($q3);
 
                 $q4="UPDATE trows SET uid='$uid' WHERE tid='$tid' AND stid='$stid'";

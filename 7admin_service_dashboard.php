@@ -129,7 +129,7 @@ th{
                 <Button class="greenbtn" onclick="openpart('addtask')">Add task</Button>
                 <Button class="greenbtn" onclick="openpart('assignstask')">Assign Sub-Task</Button>
                 <Button class="greenbtn" onclick="openpart('addusr')">Add User</Button>
-                <Button class="greenbtn" onclick="openpart('issuebook')">Issue Book</Button>
+                <Button class="greenbtn" onclick="openpart('clarification')">Clarification</Button>
                 <Button class="greenbtn" onclick="openpart('issuebookreport')">Issue Book Report</Button>
                 <a href="1index.php"><Button class="greenbtn">Logout</Button></a>
             </div>
@@ -173,6 +173,14 @@ th{
                 </div>
             </div>
 
+            <!-- Clarification-->
+            <div class="rightinnerdiv">
+                <div id="clarification" class="innerright portion" style="display:none">
+                    <Button class="greenbtn">Clarification</Button>
+
+                </div>
+            </div>
+
              <!-- Assign Sub-Task template -->
              <div class="rightinnerdiv">
                 <div id="assignstask" class="innerright portion" style="display:none">
@@ -192,7 +200,7 @@ th{
                                 <th class='table-header' width='25%'>Sub-Tasks</th>
                                 <th class='table-header' width='10%'>User</th>
                                 <th class='table-header' width='10%'>Status</th>
-                                <th class='table-header' width='10%'>Assign To</th>
+                                <th class='table-header' width='15%'>Assign To</th>
                             </tr>
                         </thead>
                         <tbody id='table-body'>
@@ -202,8 +210,8 @@ th{
                         ?>
                         <form action="9userviewtask.php" method="post" enctype="multipart/form-data">
                         <tr class='table-row'>
-                            <td><select name="stid">
-
+                            <td> <input type="checkbox"/>
+                                <select name="stid">
                                     <?php echo "<option value='" . $row['stid'] . "'>" . $row['stid'] . "</option>"; ?>
                                 </select>
                             </td>
@@ -233,7 +241,7 @@ th{
                                             $tname=$row['tname'];
                                         }
                                         echo $tname;
-                                }
+                                    }
                                 ?>
                             </td>
                             <td><?php if(empty($row['t1'])){
@@ -283,7 +291,7 @@ th{
                                     }
                                 ?>
                             </td>
-                            <td><button type='btn btn-primary' value='submit'>ASSIGN</button></td>
+                            <td><button class='btn-primary' value='submit'>ASSIGN</button></td>
                         </tr>
                         </form>
                         <?php

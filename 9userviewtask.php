@@ -4,6 +4,6 @@
     //$stid=$_POST['stid'];
     $obj=new data();
     $obj->setconnection();
-    $obj->assignstask($name,$stid);
+    $obj->assignstask($name,$stid,);
 
 ?>

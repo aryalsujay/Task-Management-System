@@ -18,17 +18,26 @@ Check this link out for more info: https://coderwall.com/p/zzgo-w/splitting-stri
 2. Assign Tasks
 a. Create a View where admin can see task and sub-tasks.
 -->Inner join both task and taskdetail(delimiter seperated table) and insert data into table accordingly.
+-->For trows, no need to inner join with task table. Inside the table using tid fetch the task-name via function.
 b. A checkbox beside every sub-task.
 -->Add in table: <input type="checkbox"/>
 c. User option beside every sub-task to select.
 -->Display user option using select and option tags.
 d. After any subtask is checked a assign button where user will be assigned a task.
--->Add all table inside a form to take the values via _POST and update log along with tdetail table.
+1st version:
+-->Add all table inside a form to take the values via _POST and update log along with tdetail table. First tried with all
+sub-task assigning at once.
 -->Take uid, retrieve username, and display if task is assigned.
+2nd version:
+-->Segregate each sub-task as a row and fill in trows table. Using stid as sub-task id unique column give the option of assigning
+a task to the user.
 
 3. View My Tasks
 User Dashboard::store user info in user tabel and assigned task in task detail table
 a. View Task then Subtask
+-->Fetch from trows table where id=uid
+-->Give option for complete,need clarification and Submit
+-->Also, store it in log
 b. An option button - Completed, Require Clarification
 c. Add note (text area) to send this as note.
 d. Submit button which send this data to admin.
