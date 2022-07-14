@@ -45,8 +45,10 @@ d. Submit button which send this data to admin.
 4. Clarification
 Admin dashboard::store admin info in admin table
 a. View Clarification tab - user, task, taskdetail, note sent by user, note by you(admin).
+-->Created a tab for clarification only tasks with note like chat option where prev note is appended to it and so on.
 b. Checkbox button add.
 c. Select same user auto and other User options too and reassign button.
+-->Gave option for new user if to assign it to him.
 
 5. Quality Check
 Manager dashboard::store in admin as manager

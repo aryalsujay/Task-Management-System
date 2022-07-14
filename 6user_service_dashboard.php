@@ -138,7 +138,7 @@
                         ?>
                         <form action="11usertask.php" method="post" enctype="multipart/form-data">
                         <tr class='table-row'>
-                            <?php $tid=$row['tid']; $stid=$row['stid'];
+                            <?php $tid=$row['tid']; $stid=$row['stid']; $note=$row['note'];
                                 if(empty($row['t1'])){
                                     if(!empty($row['t2'])){
                                         $t2=$row['t2'];
@@ -200,7 +200,8 @@
 
                             <td>
                             <!-- <div id="ifYes" style="display: none;"> -->
-                                <textarea rows = "3" cols = "30" maxlength = "200" name = "note"></textarea>
+                            <?php echo "$note" . "  <textarea rows = '3' cols = '30' maxlength = '200' name = 'note'></textarea>"; ?>
+
                             <!-- </div> -->
                             </td>
 

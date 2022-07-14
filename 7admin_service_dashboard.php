@@ -130,7 +130,7 @@ th{
                 <Button class="greenbtn" onclick="openpart('assignstask')">Assign Sub-Task</Button>
                 <Button class="greenbtn" onclick="openpart('addusr')">Add User</Button>
                 <Button class="greenbtn" onclick="openpart('clarification')">Clarification</Button>
-                <Button class="greenbtn" onclick="openpart('issuebookreport')">Issue Book Report</Button>
+                <Button class="greenbtn" onclick="openpart('manager')">Quality Check</Button>
                 <a href="1index.php"><Button class="greenbtn">Logout</Button></a>
             </div>
 
@@ -178,6 +178,113 @@ th{
             <div class="rightinnerdiv">
                 <div id="clarification" class="innerright portion" style="display:none">
                     <Button class="greenbtn">Clarification</Button>
+                    <?php
+                            $u= new data;
+                            $u->setconnection();
+                            $u->userclarify();
+                            $result=$u->userclarify();
+                    ?>
+                    <table class='tbl-qa'>
+                        <thead>
+                            <tr>
+                                <th class='table-header' width='2%'></th>
+                                <th class='table-header' width='12%'>Task</th>
+                                <th class='table-header' width='20%'>Sub-Task</th>
+                                <th class='table-header' width='15%'>Need Clarification</th>
+                                <th class='table-header' width='10%'>Current User</th>
+                                <th class='table-header' width='10%'>Change User?</th>
+                                <th class='table-header' width='8%'>Reassign</th>
+                            </tr>
+                        </thead>
+                        <tbody id='table-body'>
+                        <?php
+                            if(!empty($result)) {
+                            foreach($result as $row) {
+                        ?>
+                        <form action="12clarifytask.php" method="post" enctype="multipart/form-data">
+                        <tr class='table-row'>
+                            <td><div id="ifYes" style="display: none;">
+                                <select name="stid">
+                                    <?php echo "<option value='" . $row['stid'] . "'>" . $row['stid'] . "</option>"; ?>
+                                </select>
+                                <select name="tid">
+                                    <?php echo "<option value='" . $row['tid'] . "'>" . $row['tid'] . "</option>"; ?>
+                                </select>
+                                </div>
+                            </td>
+                            <?php $uid=$row['uid']; $tid=$row['tid']; $stid=$row['stid'];$note=$row['note'];
+                            if(empty($row['t1'])){
+                                if(!empty($row['t2'])){
+                                    $t2=$row['t2'];
+                                }
+                                else{
+                                    $t3=$row['t3'];
+                                }
+                            }
+                            else{
+                                $t1=$row['t1'];
+                            }
+                            ?>
+                            <td>
+                                <?php
+                                    $obj=new data();
+                                    $obj->setconnection();
+                                    $obj->taskname($tid);
+                                    $recordset=$obj->taskname($tid);
+                                        foreach($recordset as $row){
+                                            $tname=$row['tname'];
+                                        }
+                                        echo $tname;
+                                ?>
+                            </td>
+                            <td>
+                                <?php if($stid % 10 ==1){
+                                    echo $t1;
+                                    }elseif($stid % 10 ==2){
+                                    echo $t2;
+                                    }else{
+                                    echo $t3;
+                                    }
+                                ?>
+                            </td>
+                            <td>
+                                    <?php echo "$note" . "  <textarea rows = '3' cols = '30' maxlength = '200' name = 'note'></textarea>"; ?>
+
+                            </td>
+                            <td>
+                                <?php
+                                    $obj=new data();
+                                    $obj->setconnection();
+                                    $obj->userassigned($uid);
+                                    $record=$obj->userassigned($uid);
+                                    foreach($record as $row){
+                                        echo $row['name'];
+                                    }
+                                ?>
+                            </td>
+                            <td>
+                                <select name="name">
+                                <?php
+                                    $obj=new data();
+                                    $obj->setconnection();
+                                    $obj->studentrecord();
+                                    $recordset=$obj->studentrecord();
+                                        echo "<option>Select</option>";
+                                    foreach($recordset as $row){
+                                        echo "<option value='" . $row['name'] . "'>" . $row['name'] . "</option>";
+                                    }
+                                ?>
+                                </select>
+                            </td>
+                            <td><button class='btn primary' value='submit'>REASSIGN</button></td>
+                        </tr>
+                    </form>
+
+                    <?php
+                        }
+                    }
+                    ?>
+                    </table>
 
                 </div>
             </div>
@@ -186,17 +293,17 @@ th{
              <div class="rightinnerdiv">
                 <div id="assignstask" class="innerright portion" style="display:none">
                     <button class="greenbtn">Assign Sub-Task</button>
-                    <form action="9userviewtask.php" method="post" enctype="multipart/form-data">
+
                     <?php //Resolved
                             $u= new data;
                             $u->setconnection();
                             $u->viewstask();
                             $result=$u->viewstask();
-                        ?>
+                    ?>
                     <table class='tbl-qa'>
                         <thead>
                             <tr>
-                                <th class='table-header' width='5%'>Task No.</th>
+                                <th class='table-header' width='5%'></th>
                                 <th class='table-header' width='15%'>Task</th>
                                 <th class='table-header' width='25%'>Sub-Tasks</th>
                                 <th class='table-header' width='10%'>User</th>
@@ -211,10 +318,12 @@ th{
                         ?>
                         <form action="9userviewtask.php" method="post" enctype="multipart/form-data">
                         <tr class='table-row'>
-                            <td> <input type="checkbox"/>;
+                            <td> <input type="checkbox"/>
+                            <div id="ifYes" style="display: none;">
                                 <select name="stid">
                                     <?php echo "<option value='" . $row['stid'] . "'>" . $row['stid'] . "</option>"; ?>
                                 </select>
+                            </div>
                             </td>
                             <?php $uid=$row['uid']; $tid=$row['tid']; $stid=$row['stid'];?>
 
@@ -294,11 +403,22 @@ th{
                             </td>
                             <td><button class='btn-primary' value='submit'>ASSIGN</button></td>
                         </tr>
+
                         </form>
+
                         <?php
                             }
                         }
                         ?>
+                        </table>
+                </div>
+            </div>
+
+            <!-- Assign Sub-Task template -->
+            <div class="rightinnerdiv">
+                <div id="manager" class="innerright portion" style="display:none">
+                    <button class="greenbtn">Quality Check</button>
+
                 </div>
             </div>
 
