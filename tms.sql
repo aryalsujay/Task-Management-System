@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 11, 2022 at 07:00 PM
+-- Generation Time: Jul 15, 2022 at 08:46 PM
 -- Server version: 10.4.24-MariaDB
 -- PHP Version: 7.4.29
 
@@ -66,18 +66,28 @@ CREATE TABLE `log` (
   `id` int(12) NOT NULL,
   `tid` int(12) NOT NULL,
   `stid` int(12) NOT NULL,
-  `uid` int(12) NOT NULL
+  `uid` int(12) NOT NULL,
+  `note` varchar(255) NOT NULL,
+  `done` int(12) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `log`
 --
 
-INSERT INTO `log` (`id`, `tid`, `stid`, `uid`) VALUES
-(178, 0, 0, 4),
-(179, 31, 311, 4),
-(180, 31, 312, 5),
-(181, 31, 313, 4);
+INSERT INTO `log` (`id`, `tid`, `stid`, `uid`, `note`, `done`) VALUES
+(240, 31, 311, 4, '', 0),
+(241, 31, 312, 4, '', 0),
+(242, 33, 331, 4, '', 0),
+(243, 31, 311, 4, 'Need Clarification', 0),
+(248, 0, 311, 4, 'Reassigned to ', 0),
+(249, 33, 332, 4, 'Assigned to Amar', 0),
+(250, 33, 332, 4, 'Need Clarification', 0),
+(251, 0, 332, 4, 'Reassigned to  - Admin', 0),
+(252, 33, 332, 4, 'Completed', 0),
+(253, 0, 332, 5, 'Reassigned_to_Sujay - Manager', 0),
+(254, 33, 332, 5, 'Completed', 0),
+(255, 0, 332, 5, 'Completed!', 1);
 
 -- --------------------------------------------------------
 
@@ -125,7 +135,12 @@ INSERT INTO `tdetail` (`id`, `tid`, `uid`, `assigned`, `t1`, `t2`, `t3`) VALUES
 (24, 31, 1, 1, 'Rows to Column\r', 'Pivot option in mysql to use\r', 'assign user'),
 (25, 32, 1, 1, 'Create user and admin\r', 'Create skeleton structure for tables and view\r', 'Insert data in table'),
 (26, 33, 1, 1, 'Option display in the table\r', 'Add assign option alongside\r', 'Assigned and Unassigned signal to be displayed'),
-(27, 34, 4, 1, 'View All Task for Admin\r', 'Seperate Assigned and Unassigned\r', 'Assign Unassigned tasks');
+(27, 34, 4, 1, 'View All Task for Admin\r', 'Seperate Assigned and Unassigned\r', 'Assign Unassigned tasks'),
+(31, 38, 0, 0, '1\r', '2\r', '3'),
+(32, 39, 0, 0, '1\r', '2\r', '3'),
+(33, 40, 0, 0, '1\r', '2\r', '3'),
+(34, 41, 0, 0, '123\r', '2\r', '3'),
+(35, 42, 0, 0, 'd\r', 'd\r', 'd');
 
 -- --------------------------------------------------------
 
@@ -138,28 +153,30 @@ CREATE TABLE `trows` (
   `tid` decimal(12,0) NOT NULL,
   `stid` double NOT NULL,
   `uid` int(12) NOT NULL,
+  `status` varchar(255) NOT NULL,
   `t1` varchar(255) NOT NULL,
   `t2` varchar(255) NOT NULL,
-  `t3` varchar(255) NOT NULL
+  `t3` varchar(255) NOT NULL,
+  `note` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `trows`
 --
 
-INSERT INTO `trows` (`id`, `tid`, `stid`, `uid`, `t1`, `t2`, `t3`) VALUES
-(4, '31', 311, 4, 'Rows to Column\r', '', ''),
-(5, '31', 312, 5, '', 'Pivot option in mysql to use\r', ''),
-(6, '31', 313, 4, '', '', 'assign user'),
-(7, '32', 321, 0, 'Create user and admin\r', '', ''),
-(8, '32', 322, 1, '', 'Create skeleton structure for tables and view\r', ''),
-(9, '32', 323, 0, '', '', 'Insert data in table'),
-(10, '33', 331, 0, 'Option display in the table\r', '', ''),
-(11, '33', 332, 0, '', 'Add assign option alongside\r', ''),
-(12, '33', 333, 0, '', '', 'Assigned and Unassigned signal to be displayed'),
-(13, '34', 341, 0, 'View All Task for Admin\r', '', ''),
-(14, '34', 342, 4, '', 'Seperate Assigned and Unassigned\r', ''),
-(15, '34', 343, 0, '', '', 'Assign Unassigned tasks');
+INSERT INTO `trows` (`id`, `tid`, `stid`, `uid`, `status`, `t1`, `t2`, `t3`, `note`) VALUES
+(4, '31', 311, 4, 'Need Clarification', 'Rows to Column\r', '', '', 'substring index?. . . lets chat |Lead now ok? | ok then | now |Lead: ok |  |  | ok what next |Lead: u knw |Lead:  |Lead: cmn |Lead:  |Lead: '),
+(5, '31', 312, 4, 'Completed!', '', 'Pivot option in mysql to use\r', '', 'pivot function? |Lead:  |Lead:  | done | '),
+(6, '31', 313, 5, 'Completed', '', '', 'assign user', 'what task to assign. simple for now. yes and u knw | assign new | new | '),
+(7, '32', 321, 5, 'Need Clarification', 'Create user and admin\r', '', '', '. Yes a query. ok done. created panel, now? |Lead:  |Lead: '),
+(8, '32', 322, 1, '', '', 'Create skeleton structure for tables and view\r', '', ''),
+(9, '32', 323, 4, 'Completed!', '', '', 'Insert data in table', ' | pls check | well done'),
+(10, '33', 331, 4, '', 'Option display in the table\r', '', '', ''),
+(11, '33', 332, 5, 'Completed!', '', 'Add assign option alongside\r', '', ' | ok |Lead: ok | ok |Manager:  |  | '),
+(12, '33', 333, 0, '', '', '', 'Assigned and Unassigned signal to be displayed', ''),
+(13, '34', 341, 0, '', 'View All Task for Admin\r', '', '', ''),
+(14, '34', 342, 34, 'Completed!', '', 'Seperate Assigned and Unassigned\r', '', 'seperated |Manager: ok u may |Manager: seperated? |  | '),
+(15, '34', 343, 0, '', '', '', 'Assign Unassigned tasks', '');
 
 -- --------------------------------------------------------
 
@@ -238,25 +255,25 @@ ALTER TABLE `admin`
 -- AUTO_INCREMENT for table `log`
 --
 ALTER TABLE `log`
-  MODIFY `id` int(12) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=182;
+  MODIFY `id` int(12) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=256;
 
 --
 -- AUTO_INCREMENT for table `task`
 --
 ALTER TABLE `task`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=43;
 
 --
 -- AUTO_INCREMENT for table `tdetail`
 --
 ALTER TABLE `tdetail`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
 
 --
 -- AUTO_INCREMENT for table `trows`
 --
 ALTER TABLE `trows`
-  MODIFY `id` int(12) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
+  MODIFY `id` int(12) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
 
 --
 -- AUTO_INCREMENT for table `user`
