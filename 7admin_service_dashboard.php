@@ -1,4 +1,5 @@
 <?php include "5data_class.php";
+//$adminid=$_GET['adminid'];
 define("ROW_PER_PAGE",2);
     if(empty($_SESSION['adminid'])){
         header("Location:1index.php?msg=Invalid");
@@ -125,12 +126,14 @@ th{
         <div class="innerdiv">
             <div class="row"><a href="7admin_service_dashboard.php"><img class="imglogo" src="images/tm.png"></a></div>
             <div class="leftinnerdiv">
-                <Button class="greenbtn" onclick="openpart('search')">Search</Button>
+                <button class="greenbtn">Welcome</button>
+                <!-- <button class="greenbtn" onclick="openpart('myaccount')">My Account</button> -->
                 <Button class="greenbtn" onclick="openpart('addtask')">Add task</Button>
                 <Button class="greenbtn" onclick="openpart('assignstask')">Assign Sub-Task</Button>
                 <Button class="greenbtn" onclick="openpart('addusr')">Add User</Button>
                 <Button class="greenbtn" onclick="openpart('clarification')">Clarification</Button>
                 <Button class="greenbtn" onclick="openpart('manager')">Quality Check</Button>
+                <Button class="greenbtn" onclick="openpart('report')">Report</Button>
                 <a href="1index.php"><Button class="greenbtn">Logout</Button></a>
             </div>
 
@@ -139,6 +142,7 @@ th{
                 <div id="addtask" class="innerright portion" style="display:none">
                 <Button class="greenbtn">Add Task</Button>
                     <form action="8addtask.php" method="post" enctype="multipart/form-data">
+
                         <label>Task Name: </label><input type="text" name="tname"/>
                         <br>
                         <label>Task Detail: </label>
@@ -155,6 +159,11 @@ th{
                 <div id="addusr" class="innerright portion" style="display:none">
                     <Button class="greenbtn">Add User</Button>
                     <form action="10adduser.php" method="post" enctype="multipart/form-data">
+                    <div id="ifYes" style="display: none;">
+                        <select name="adminid">
+                            <?php echo "<option value='" . $adminid . "'>" . $adminid . "</option>"; ?>
+                        </select>
+                    </div>
                         <label>Name: </label><input type="text"  name="addname"/>
                         <br>
                         <label>Email: </label><input type="email"  name="addemail"/>
@@ -174,7 +183,6 @@ th{
             </div>
 
             <!-- Clarification-->
-
             <div class="rightinnerdiv">
                 <div id="clarification" class="innerright portion" style="display:none">
                     <Button class="greenbtn">Clarification</Button>
@@ -209,6 +217,9 @@ th{
                                 </select>
                                 <select name="tid">
                                     <?php echo "<option value='" . $row['tid'] . "'>" . $row['tid'] . "</option>"; ?>
+                                </select>
+                                <select name="uid">
+                                    <?php echo "<option value='" . $row['uid'] . "'>" . $row['uid'] . "</option>"; ?>
                                 </select>
                                 </div>
                             </td>
@@ -414,10 +425,734 @@ th{
                 </div>
             </div>
 
-            <!-- Assign Sub-Task template -->
+            <!-- Quality Check by Manager Template -->
             <div class="rightinnerdiv">
                 <div id="manager" class="innerright portion" style="display:none">
-                    <button class="greenbtn">Quality Check</button>
+                    <Button class="greenbtn">Quality Check</Button>
+                    <?php
+                            $u= new data;
+                            $u->setconnection();
+                            $u->reviewtask();
+                            $result=$u->reviewtask();
+                    ?>
+                    <table class='tbl-qa'>
+                        <thead>
+                            <tr>
+                                <th class='table-header' width='2%'></th>
+                                <th class='table-header' width='12%'>Task</th>
+                                <th class='table-header' width='20%'>Sub-Task</th>
+                                <th class='table-header' width='15%'>Completed Tasks</th>
+                                <th class='table-header' width='10%'>Current User</th>
+                                <th class='table-header' width='10%'>Change User?</th>
+                                <th class='table-header' width='8%'>Reassign/Complete</th>
+                            </tr>
+                        </thead>
+                        <tbody id='table-body'>
+                        <?php
+                            if(!empty($result)) {
+                            foreach($result as $row) {
+                        ?>
+                        <form action="13qualitycheck.php" method="post" enctype="multipart/form-data">
+                        <tr class='table-row'>
+                            <td><div id="ifYes" style="display: none;">
+                                <select name="stid">
+                                    <?php echo "<option value='" . $row['stid'] . "'>" . $row['stid'] . "</option>"; ?>
+                                </select>
+                                <select name="tid">
+                                    <?php echo "<option value='" . $row['tid'] . "'>" . $row['tid'] . "</option>"; ?>
+                                </select>
+                                <select name="uid">
+                                    <?php echo "<option value='" . $row['uid'] . "'>" . $row['uid'] . "</option>"; ?>
+                                </select>
+                                </div>
+                            </td>
+                            <?php $uid=$row['uid']; $tid=$row['tid']; $stid=$row['stid'];$note=$row['note'];
+                            if(empty($row['t1'])){
+                                if(!empty($row['t2'])){
+                                    $t2=$row['t2'];
+                                }
+                                else{
+                                    $t3=$row['t3'];
+                                }
+                            }
+                            else{
+                                $t1=$row['t1'];
+                            }
+                            ?>
+                            <td>
+                                <?php
+                                    $obj=new data();
+                                    $obj->setconnection();
+                                    $obj->taskname($tid);
+                                    $recordset=$obj->taskname($tid);
+                                        foreach($recordset as $row){
+                                            $tname=$row['tname'];
+                                        }
+                                        echo $tname;
+                                ?>
+                            </td>
+                            <td>
+                                <?php if($stid % 10 ==1){
+                                    echo $t1;
+                                    }elseif($stid % 10 ==2){
+                                    echo $t2;
+                                    }else{
+                                    echo $t3;
+                                    }
+                                ?>
+                            </td>
+                            <td>
+                                    <?php echo "$note" . "  <textarea rows = '3' cols = '30' maxlength = '200' name = 'note'></textarea>"; ?>
+                            </td>
+                            <td>
+                                <?php
+                                    $obj=new data();
+                                    $obj->setconnection();
+                                    $obj->userassigned($uid);
+                                    $record=$obj->userassigned($uid);
+                                    foreach($record as $row){
+                                        echo $row['name'];
+                                    }
+                                ?>
+                            </td>
+                            <td>
+                                <select name="name">
+                                <?php
+                                    $obj=new data();
+                                    $obj->setconnection();
+                                    $obj->studentrecord();
+                                    $recordset=$obj->studentrecord();
+                                        echo "<option>Select</option>";
+                                    foreach($recordset as $row){
+                                        echo "<option value='" . $row['name'] . "'>" . $row['name'] . "</option>";
+                                    }
+                                ?>
+                                </select>
+                            </td>
+                            <td>
+                                <select name="next">
+                                    <option id="Select">Select</option>
+                                    <option id="Reassign">Reassign</option>
+                                    <option id="Complete">Complete</option>
+                                </select>
+                                <button class='btn primary' value='submit'>Submit</button>
+                            </td>
+                        </tr>
+                    </form>
+
+                    <?php
+                        }
+                    }
+                    ?>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Detailed Report-->
+            <div class="rightinnerdiv">
+                <div id="report" class="innerright portion" style="display:none">
+                    <Button class="greenbtn">Report</Button>
+                    <table class='tbl-qa'>
+                        <?php require_once "4.1db.php"; ?>
+                        <thead>
+                            <tr>
+                                <th class='table-header' width='17%'>Tasks</th>
+                                <th class='table-header' width='17%'>Not Assigned</th>
+                                <th class='table-header' width='17%'>Clarification</th>
+                                <th class='table-header' width='17%'>Quality Check</th>
+                                <th class='table-header' width='17%'>Completed</th>
+                                <th class='table-header' width='17%'>Reassign</th>
+                            </tr>
+                        </thead>
+                        <tbody id='table-body'>
+                            <tr class='table-row'>
+                                <td>
+                                    <?php
+                                        $q="SELECT * FROM trows";
+                                        $result = mysqli_query($conn, $q);
+                                        $rc = mysqli_num_rows($result);
+                                    ?>
+                                        <button type='button' class='btn primary' style='font-family: Arial;padding 10px;'><a href="7admin_service_dashboard.php?viewid=admin"><?php echo $rc;?></button></a></td>";
+                                </td>
+                                <td>
+                                    <?php
+                                        $q="SELECT * FROM trows WHERE status=''";
+                                        $result = mysqli_query($conn, $q);
+                                        $rc = mysqli_num_rows($result);
+
+                                    ?>
+                                        <button type='button' class='btn primary' style='font-family: Arial;padding 10px;'><a href="7admin_service_dashboard.php?unid=unassigned"><?php echo $rc;?></button></a></td>";
+
+                                </td>
+                                <td>
+                                    <?php
+                                        $q="SELECT * FROM trows WHERE status='Need Clarification'";
+                                        $result = mysqli_query($conn, $q);
+                                        $rc = mysqli_num_rows($result);
+
+                                        ?>
+                                        <button type='button' class='btn primary' style='font-family: Arial;padding 10px;'><a href="7admin_service_dashboard.php?clid=clarification_needed"><?php echo $rc;?></button></a></td>";
+
+                                </td>
+                                <td>
+                                    <?php
+                                        $q="SELECT * FROM trows WHERE status='Completed'";
+                                        $result = mysqli_query($conn, $q);
+                                        $rc = mysqli_num_rows($result);
+
+                                    ?>
+                                    <button type='button' class='btn primary' style='font-family: Arial;padding 10px;'><a href="7admin_service_dashboard.php?rvid=review_needed"><?php echo $rc;?></button></a></td>";
+
+                                </td>
+                                <td>
+                                    <?php
+                                        $q="SELECT * FROM trows WHERE status='Completed!'";
+                                        $result = mysqli_query($conn, $q);
+                                        $rc = mysqli_num_rows($result);
+                                        ?>
+                                        <button type='button' class='btn primary' style='font-family: Arial;padding 10px;'><a href="7admin_service_dashboard.php?ctid=completed"><?php echo $rc;?></button></a></td>";
+
+                                </td>
+                                <td>
+
+                                        <button type='button' class='btn primary' style='font-family: Arial;padding 10px;'><a href="7admin_service_dashboard.php?cpid=lifecycle"><?php echo "ALL";?></button></a></td>";
+
+                                </td>
+                            </tr>
+                    </table>
+                    <?php
+
+                    ?>
+                </div>
+            </div>
+
+            <!-- View All Tasks -->
+            <div class="rightinnerdiv">
+                <div id="trows" class="innerright portion" style="<?php if(!empty($_REQUEST['viewid'])){$viewid=$_REQUEST['viewid'];}else{echo "display:none";}?>">
+                        <button class="greenbtn">All Tasks</button>
+                        <?php
+                            $obj= new data;
+                            $obj->setconnection();
+                            $obj->viewstask();
+                            $recordset=$obj->viewstask();
+                        ?>
+                        <table class='tbl-qa'>
+
+                        <thead>
+                            <tr>
+                                <th class='table-header' width='17%'>Task ID</th>
+                                <th class='table-header' width='17%'>Task Name</th>
+                                <th class='table-header' width='17%'>Sub-Task</th>
+                            </tr>
+                        </thead>
+                        <tbody id='table-body'>
+                            <?php
+                            foreach($recordset as $row){
+                            ?>
+                            <tr class='table-row'>
+                                <?php
+                                    $stid=$row['stid'];
+                                    $tid=$row['tid'];
+                                    if(empty($row['t1'])){
+                                    if(!empty($row['t2'])){
+                                        $t2=$row['t2'];
+                                    }
+                                    else{
+                                        $t3=$row['t3'];
+                                    }
+                                    }
+                                    else{
+                                    $t1=$row['t1'];
+                                    }
+                                ?>
+                                <td><?php echo $tid;?></td>
+                                <td>
+                                <?php
+                                    $obj=new data();
+                                    $obj->setconnection();
+                                    $obj->taskname($tid);
+                                    $recordset=$obj->taskname($tid);
+                                        foreach($recordset as $row){
+                                            $tname=$row['tname'];
+                                        }
+                                        echo $tname;
+                               ?>
+                                </td>
+                                <td><?php
+                                if($stid % 10==1){
+                                    echo $t1;
+                                }
+                                elseif($stid % 10==2){
+
+                                    echo $t2;
+                                }
+                                else{
+                                    echo $t3;
+                                }
+
+                                ?>
+                                </td>
+                            </tr>
+                            <?php
+                        }
+                        ?>
+                        </table>
+
+
+                </div>
+            </div>
+
+            <!-- Unassigned Tasks -->
+            <div class="rightinnerdiv">
+                <div id="unassigned" class="innerright portion" style="<?php if(!empty($_REQUEST['unid'])){$viewid=$_REQUEST['unid'];}else{echo "display:none";}?>">
+                        <button class="greenbtn">Unassigned Tasks</button>
+                        <?php
+                            $obj= new data;
+                            $obj->setconnection();
+                            $obj->unassignedtask();
+                            $recordset=$obj->unassignedtask();
+                        ?>
+                        <table class='tbl-qa'>
+
+                        <thead>
+                            <tr>
+                                <th class='table-header' width='17%'>Task ID</th>
+                                <th class='table-header' width='17%'>Task Name</th>
+                                <th class='table-header' width='17%'>Sub-Task</th>
+                            </tr>
+                        </thead>
+                        <tbody id='table-body'>
+                            <?php
+                            foreach($recordset as $row){
+                            ?>
+                            <tr class='table-row'>
+                                <?php
+                                    $stid=$row['stid'];
+                                    $tid=$row['tid'];
+                                    if(empty($row['t1'])){
+                                    if(!empty($row['t2'])){
+                                        $t2=$row['t2'];
+                                    }
+                                    else{
+                                        $t3=$row['t3'];
+                                    }
+                                    }
+                                    else{
+                                    $t1=$row['t1'];
+                                    }
+                                ?>
+                                <td><?php echo $tid;?></td>
+                                <td>
+                                <?php
+                                    $obj=new data();
+                                    $obj->setconnection();
+                                    $obj->taskname($tid);
+                                    $recordset=$obj->taskname($tid);
+                                        foreach($recordset as $row){
+                                            $tname=$row['tname'];
+                                        }
+                                        echo $tname;
+                               ?>
+                                </td>
+                                <td><?php
+                                if($stid % 10==1){
+                                    echo $t1;
+                                }
+                                elseif($stid % 10==2){
+
+                                    echo $t2;
+                                }
+                                else{
+                                    echo $t3;
+                                }
+
+                                ?>
+                                </td>
+                            </tr>
+                            <?php
+                        }
+                        ?>
+                        </table>
+
+
+                </div>
+            </div>
+
+            <!-- Clarification Needed Tasks -->
+            <div class="rightinnerdiv">
+                <div id="clarif" class="innerright portion" style="<?php if(!empty($_REQUEST['clid'])){$viewid=$_REQUEST['clid'];}else{echo "display:none";}?>">
+                        <button class="greenbtn">Need Calrification</button>
+                        <?php
+                            $obj= new data;
+                            $obj->setconnection();
+                            $obj->userclarify();
+                            $recordset=$obj->userclarify();
+                        ?>
+                        <table class='tbl-qa'>
+
+                        <thead>
+                            <tr>
+                                <th class='table-header' width='17%'>Task ID</th>
+                                <th class='table-header' width='17%'>Task Name</th>
+                                <th class='table-header' width='17%'>Sub-Task</th>
+                                <th class='table-header' width='17%'>User Assigned</th>
+                            </tr>
+                        </thead>
+                        <tbody id='table-body'>
+                            <?php
+                            foreach($recordset as $row){
+                            ?>
+                            <tr class='table-row'>
+                                <?php
+                                    $stid=$row['stid'];
+                                    $tid=$row['tid'];
+                                    $uid=$row['uid'];
+                                    if(empty($row['t1'])){
+                                    if(!empty($row['t2'])){
+                                        $t2=$row['t2'];
+                                    }
+                                    else{
+                                        $t3=$row['t3'];
+                                    }
+                                    }
+                                    else{
+                                    $t1=$row['t1'];
+                                    }
+                                ?>
+                                <td><?php echo $tid;?></td>
+                                <td>
+                                <?php
+                                    $obj=new data();
+                                    $obj->setconnection();
+                                    $obj->taskname($tid);
+                                    $recordset=$obj->taskname($tid);
+                                        foreach($recordset as $row){
+                                            $tname=$row['tname'];
+                                        }
+                                        echo $tname;
+                               ?>
+                                </td>
+                                <td><?php
+                                if($stid % 10==1){
+                                    echo $t1;
+                                }
+                                elseif($stid % 10==2){
+
+                                    echo $t2;
+                                }
+                                else{
+                                    echo $t3;
+                                }
+
+                                ?>
+                                </td>
+                                <td>
+                                    <?php
+                                    $obj=new data();
+                                    $obj->setconnection();
+                                    $obj->userassigned($uid);
+                                    $record=$obj->userassigned($uid);
+                                    foreach($record as $row){
+                                        $uname=$row['name'];
+                                    }
+                                    echo $uname;
+                                    ?>
+                                </td>
+                            </tr>
+                            <?php
+                        }
+                        ?>
+                        </table>
+
+
+                </div>
+            </div>
+
+            <!-- Review Needed Tasks -->
+            <div class="rightinnerdiv">
+                <div id="review" class="innerright portion" style="<?php if(!empty($_REQUEST['rvid'])){$viewid=$_REQUEST['rvid'];}else{echo "display:none";}?>">
+                        <button class="greenbtn">Need Review</button>
+                        <?php
+                            $obj= new data;
+                            $obj->setconnection();
+                            $obj->reviewtask();
+                            $recordset=$obj->reviewtask();
+                        ?>
+                        <table class='tbl-qa'>
+
+                        <thead>
+                            <tr>
+                                <th class='table-header' width='17%'>Task ID</th>
+                                <th class='table-header' width='17%'>Task Name</th>
+                                <th class='table-header' width='17%'>Sub-Task</th>
+                                <th class='table-header' width='17%'>User Assigned</th>
+                            </tr>
+                        </thead>
+                        <tbody id='table-body'>
+                            <?php
+                            foreach($recordset as $row){
+                            ?>
+                            <tr class='table-row'>
+                                <?php
+                                    $stid=$row['stid'];
+                                    $tid=$row['tid'];
+                                    $uid=$row['uid'];
+                                    if(empty($row['t1'])){
+                                    if(!empty($row['t2'])){
+                                        $t2=$row['t2'];
+                                    }
+                                    else{
+                                        $t3=$row['t3'];
+                                    }
+                                    }
+                                    else{
+                                    $t1=$row['t1'];
+                                    }
+                                ?>
+                                <td><?php echo $tid;?></td>
+                                <td>
+                                <?php
+                                    $obj=new data();
+                                    $obj->setconnection();
+                                    $obj->taskname($tid);
+                                    $recordset=$obj->taskname($tid);
+                                        foreach($recordset as $row){
+                                            $tname=$row['tname'];
+                                        }
+                                        echo $tname;
+                               ?>
+                                </td>
+                                <td><?php
+                                if($stid % 10==1){
+                                    echo $t1;
+                                }
+                                elseif($stid % 10==2){
+
+                                    echo $t2;
+                                }
+                                else{
+                                    echo $t3;
+                                }
+
+                                ?>
+                                </td>
+                                <td>
+                                    <?php
+                                    $obj=new data();
+                                    $obj->setconnection();
+                                    $obj->userassigned($uid);
+                                    $record=$obj->userassigned($uid);
+                                    foreach($record as $row){
+                                        $uname=$row['name'];
+                                    }
+                                    echo $uname;
+                                    ?>
+                                </td>
+                            </tr>
+                            <?php
+                        }
+                        ?>
+                        </table>
+
+
+                </div>
+            </div>
+
+            <!-- Review Needed Tasks -->
+            <div class="rightinnerdiv">
+                <div id="complete" class="innerright portion" style="<?php if(!empty($_REQUEST['ctid'])){$viewid=$_REQUEST['ctid'];}else{echo "display:none";}?>">
+                        <button class="greenbtn">Completed Task</button>
+                        <?php
+                            $obj= new data;
+                            $obj->setconnection();
+                            $obj->completed();
+                            $recordset=$obj->completed();
+                        ?>
+                        <table class='tbl-qa'>
+
+                        <thead>
+                            <tr>
+                                <th class='table-header' width='17%'>Task ID</th>
+                                <th class='table-header' width='17%'>Task Name</th>
+                                <th class='table-header' width='17%'>Sub-Task</th>
+                                <th class='table-header' width='17%'>User Completed</th>
+                            </tr>
+                        </thead>
+                        <tbody id='table-body'>
+                            <?php
+                            foreach($recordset as $row){
+                            ?>
+                            <tr class='table-row'>
+                                <?php
+                                    $stid=$row['stid'];
+                                    $tid=$row['tid'];
+                                    $uid=$row['uid'];
+                                    if(empty($row['t1'])){
+                                    if(!empty($row['t2'])){
+                                        $t2=$row['t2'];
+                                    }
+                                    else{
+                                        $t3=$row['t3'];
+                                    }
+                                    }
+                                    else{
+                                    $t1=$row['t1'];
+                                    }
+                                ?>
+                                <td><?php echo $tid;?></td>
+                                <td>
+                                <?php
+                                    $obj=new data();
+                                    $obj->setconnection();
+                                    $obj->taskname($tid);
+                                    $recordset=$obj->taskname($tid);
+                                        foreach($recordset as $row){
+                                            $tname=$row['tname'];
+                                        }
+                                        echo $tname;
+                               ?>
+                                </td>
+                                <td><?php
+                                if($stid % 10==1){
+                                    echo $t1;
+                                }
+                                elseif($stid % 10==2){
+
+                                    echo $t2;
+                                }
+                                else{
+                                    echo $t3;
+                                }
+
+                                ?>
+                                </td>
+                                <td>
+                                    <?php
+                                    $obj=new data();
+                                    $obj->setconnection();
+                                    $obj->userassigned($uid);
+                                    $record=$obj->userassigned($uid);
+                                    foreach($record as $row){
+                                        $uname=$row['name'];
+                                    }
+                                    echo $uname;
+                                    ?>
+                                </td>
+                            </tr>
+                            <?php
+                        }
+                        ?>
+                        </table>
+
+
+                </div>
+            </div>
+
+            <!-- Reassign Tasks (Complete Lifecycle) -->
+            <div class="rightinnerdiv">
+                <div id="complete" class="innerright portion" style="<?php if(!empty($_REQUEST['cpid'])){$viewid=$_REQUEST['cpid'];}else{echo "display:none";}?>">
+                        <button class="greenbtn">Complete Lifecycle</button>
+                        <?php
+                            $obj= new data;
+                            $obj->setconnection();
+                            $obj->log();
+                            $recordset=$obj->log();
+                        ?>
+                        <table class='tbl-qa'>
+
+                        <thead>
+                            <tr>
+                                <th class='table-header' width='17%'>Task ID</th>
+                                <th class='table-header' width='17%'>Task Name</th>
+                                <th class='table-header' width='17%'>Sub-Task</th>
+                                <th class='table-header' width='17%'>Status</th>
+                                <th class='table-header' width='17%'>User Completed</th>
+                            </tr>
+                        </thead>
+                        <tbody id='table-body'>
+                            <?php
+                            foreach($recordset as $row){
+                            ?>
+                            <tr class='table-row'>
+                                <?php
+                                    $stid=$row['stid'];
+                                    //$tid=$row['tid'];
+                                    $uid=$row['uid'];
+                                    $note=$row['note'];
+
+                                ?>
+                                <td>
+                                <?php
+                                        $obj=new data();
+                                        $obj->setconnection();
+                                        $obj->staskname($stid);
+                                        $recordset=$obj->staskname($stid);
+                                            foreach($recordset as $row){
+                                                $tid=$row['tid'];
+
+                                            }
+                                            echo $tid . "& " . $stid;
+                                    ?>
+                                    </td>
+                                <td><?php
+                                        $obj=new data();
+                                        $obj->setconnection();
+                                        $obj->staskname($stid);
+                                        $recordset=$obj->staskname($stid);
+                                            foreach($recordset as $row){
+                                                $tname=$row['tname'];
+
+                                            }
+                                            echo $tname;
+                                    ?>
+                                </td>
+
+                                <td><?php
+                                $obj=new data();
+                                $obj->setconnection();
+                                $obj->staskname($stid);
+                                $recordset=$obj->staskname($stid);
+                                    foreach($recordset as $row){
+                                        if($stid % 10==1){
+                                           $t=$row['t1'];
+                                        }
+                                        elseif($stid % 10==2){
+
+                                            $t= $row['t2'];
+                                        }
+                                        else{
+                                            $t= $row['t3'];
+                                        }
+
+                                    }
+                                    echo $t;
+
+
+                                ?>
+                                </td>
+                                <td>
+                                <?php
+                                    echo $note;
+                                    ?>
+                                </td>
+                                <td>
+                                    <?php
+                                    $obj=new data();
+                                    $obj->setconnection();
+                                    $obj->userassigned($uid);
+                                    $record=$obj->userassigned($uid);
+                                    foreach($record as $row){
+                                        $uname=$row['name'];
+                                    }
+                                    echo $uname;
+                                    ?>
+                                </td>
+                            </tr>
+                            <?php
+                        }
+                        ?>
+                        </table>
+
 
                 </div>
             </div>
@@ -433,6 +1168,14 @@ th{
                 x[i].style.display="none";
             }
             document.getElementById(portion).style.display="block";
+        }
+        function yesnoCheck(that){
+            if (that.value == "Need Clarification") {
+                alert("check");
+                document.getElementById("ifYes").style.display = "block";
+            }else{
+                document.getElementById("ifYes").style.display = "none";
+            }
         }
     </script>
 

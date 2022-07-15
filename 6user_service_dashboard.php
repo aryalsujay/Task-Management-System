@@ -200,7 +200,7 @@
 
                             <td>
                             <!-- <div id="ifYes" style="display: none;"> -->
-                            <?php echo "$note" . "  <textarea rows = '3' cols = '30' maxlength = '200' name = 'note'></textarea>"; ?>
+                            <?php echo "$note |" . "  <textarea rows = '3' cols = '30' maxlength = '200' name = 'note'></textarea>"; ?>
 
                             <!-- </div> -->
                             </td>

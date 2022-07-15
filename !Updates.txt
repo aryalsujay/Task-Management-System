@@ -54,7 +54,10 @@ c. Select same user auto and other User options too and reassign button.
 Manager dashboard::store in admin as manager
 If usertype==manager then open extra tab in dashboard.
 a. User ,task, sub-task, report of task assigned to user
+-->Took Clarification tab template and added reassign+completed option.
+-->Take only those task which are marked completed by the user.
 b. Add an option to add note column if reassign is selected else completed.
+-->chat as before.
 
 6. Report
 a. Create a table my tasks, not assigned, pending, clarification, reassign, completed
