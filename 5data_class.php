@@ -224,9 +224,21 @@ session_start();
             $data=$this->connection->query($q);
             return $data;
         }
+        //Fetch Task Id
+        function fetchid(){
+            $q="SELECT * FROM task ORDER BY id ASC";
+            $data=$this->connection->query($q);
+            return $data;
+        }
         //View Task as admin
         function viewtask(){
-            $q="SELECT * FROM tdetail as td INNER JOIN task AS t ON td.tid=t.id ORDER BY td.id ASC";
+            $q="SELECT * FROM trows as td INNER JOIN trows AS t ON td.id=t.tid ORDER BY td.id ASC";
+            $data=$this->connection->query($q);
+            return $data;
+        }
+        //View Task as admin - tid unique
+        function taskid($tid){
+            $q="SELECT * FROM trows WHERE tid='$tid'";
             $data=$this->connection->query($q);
             return $data;
         }
@@ -312,14 +324,31 @@ session_start();
             $data=$this->connection->query($q);
             return $data;
         }
+        //Retrieve User needing task clarification with tid
+        function uclarid($tid){
+            $q="SELECT * FROM trows WHERE status='Need Clarification' AND tid='$tid'";
+            $data=$this->connection->query($q);
+            return $data;
+        }
         //Retrieve Completed Task by Users
         function reviewtask(){
             $q="SELECT * FROM trows WHERE status='Completed'";
             $data=$this->connection->query($q);
             return $data;
         }
+        //Retrieve Completed Task by Users with tid
+        function rvid($tid){
+            $q="SELECT * FROM trows WHERE status='Completed' AND tid='$tid'";
+            $data=$this->connection->query($q);
+            return $data;
+        }
         function completed(){
             $q="SELECT * FROM trows WHERE status='Completed!'";
+            $data=$this->connection->query($q);
+            return $data;
+        }
+        function did($tid){
+            $q="SELECT * FROM trows WHERE status='Completed!' AND tid='$tid'";
             $data=$this->connection->query($q);
             return $data;
         }
@@ -438,13 +467,25 @@ session_start();
             $data=$this->connection->query($q);
             return $data;
         }
+        //Unassigned Tasks
+        function untaskid($tid){
+            //$this->tid=$tid;
+            $q="SELECT * FROM trows WHERE status=''AND tid='$tid'";
+            $data=$this->connection->query($q);
+            return $data;
+        }
         //Reassigned
         function log(){
             $q="SELECT * FROM log where note like '%assigned%' ORDER BY stid ASC";
             $data=$this->connection->query($q);
             return $data;
         }
-
+        //Reassigned stid
+        function logid($stid){
+            $q="SELECT * FROM log where note like '%assigned%' AND stid='$stid' ORDER BY stid ASC";
+            $data=$this->connection->query($q);
+            return $data;
+        }
     }
 
 ?>

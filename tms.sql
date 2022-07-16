@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 15, 2022 at 08:46 PM
+-- Generation Time: Jul 16, 2022 at 07:54 PM
 -- Server version: 10.4.24-MariaDB
 -- PHP Version: 7.4.29
 
@@ -76,18 +76,17 @@ CREATE TABLE `log` (
 --
 
 INSERT INTO `log` (`id`, `tid`, `stid`, `uid`, `note`, `done`) VALUES
-(240, 31, 311, 4, '', 0),
-(241, 31, 312, 4, '', 0),
-(242, 33, 331, 4, '', 0),
-(243, 31, 311, 4, 'Need Clarification', 0),
-(248, 0, 311, 4, 'Reassigned to ', 0),
-(249, 33, 332, 4, 'Assigned to Amar', 0),
-(250, 33, 332, 4, 'Need Clarification', 0),
-(251, 0, 332, 4, 'Reassigned to  - Admin', 0),
-(252, 33, 332, 4, 'Completed', 0),
-(253, 0, 332, 5, 'Reassigned_to_Sujay - Manager', 0),
-(254, 33, 332, 5, 'Completed', 0),
-(255, 0, 332, 5, 'Completed!', 1);
+(258, 43, 431, 4, 'Assigned to Amar', 0),
+(259, 43, 432, 5, 'Assigned to Sujay', 0),
+(260, 43, 431, 4, 'Need Clarification', 0),
+(261, 0, 431, 4, 'Reassigned to ', 0),
+(262, 43, 431, 4, 'Completed', 0),
+(263, 0, 431, 4, 'Completed!', 1),
+(264, 43, 432, 5, 'Completed', 0),
+(265, 32, 322, 4, 'Assigned to Amar', 0),
+(266, 31, 312, 5, 'Assigned to Sujay', 0),
+(267, 31, 312, 5, 'Need Clarification', 0),
+(268, 32, 322, 4, 'Completed', 0);
 
 -- --------------------------------------------------------
 
@@ -108,8 +107,7 @@ CREATE TABLE `task` (
 INSERT INTO `task` (`id`, `tname`, `detail`) VALUES
 (31, 'Column Maintain', 'Rows to Column\r\nPivot option in mysql to use\r\nassign user'),
 (32, 'Create a view', 'Create user and admin\r\nCreate skeleton structure for tables and view\r\nInsert data in table'),
-(33, 'Add user option', 'Option display in the table\r\nAdd assign option alongside\r\nAssigned and Unassigned signal to be displayed'),
-(34, 'Create a Admin Panel', 'View All Task for Admin\r\nSeperate Assigned and Unassigned\r\nAssign Unassigned tasks');
+(43, 'Create final report', 'Dashboard panel\r\nCount with links\r\nSeperate via hyperlink');
 
 -- --------------------------------------------------------
 
@@ -140,7 +138,8 @@ INSERT INTO `tdetail` (`id`, `tid`, `uid`, `assigned`, `t1`, `t2`, `t3`) VALUES
 (32, 39, 0, 0, '1\r', '2\r', '3'),
 (33, 40, 0, 0, '1\r', '2\r', '3'),
 (34, 41, 0, 0, '123\r', '2\r', '3'),
-(35, 42, 0, 0, 'd\r', 'd\r', 'd');
+(35, 42, 0, 0, 'd\r', 'd\r', 'd'),
+(36, 43, 0, 0, 'Dashboard panel\r', 'Count with links\r', 'Seperate via hyperlink');
 
 -- --------------------------------------------------------
 
@@ -165,18 +164,15 @@ CREATE TABLE `trows` (
 --
 
 INSERT INTO `trows` (`id`, `tid`, `stid`, `uid`, `status`, `t1`, `t2`, `t3`, `note`) VALUES
-(4, '31', 311, 4, 'Need Clarification', 'Rows to Column\r', '', '', 'substring index?. . . lets chat |Lead now ok? | ok then | now |Lead: ok |  |  | ok what next |Lead: u knw |Lead:  |Lead: cmn |Lead:  |Lead: '),
-(5, '31', 312, 4, 'Completed!', '', 'Pivot option in mysql to use\r', '', 'pivot function? |Lead:  |Lead:  | done | '),
-(6, '31', 313, 5, 'Completed', '', '', 'assign user', 'what task to assign. simple for now. yes and u knw | assign new | new | '),
-(7, '32', 321, 5, 'Need Clarification', 'Create user and admin\r', '', '', '. Yes a query. ok done. created panel, now? |Lead:  |Lead: '),
-(8, '32', 322, 1, '', '', 'Create skeleton structure for tables and view\r', '', ''),
-(9, '32', 323, 4, 'Completed!', '', '', 'Insert data in table', ' | pls check | well done'),
-(10, '33', 331, 4, '', 'Option display in the table\r', '', '', ''),
-(11, '33', 332, 5, 'Completed!', '', 'Add assign option alongside\r', '', ' | ok |Lead: ok | ok |Manager:  |  | '),
-(12, '33', 333, 0, '', '', '', 'Assigned and Unassigned signal to be displayed', ''),
-(13, '34', 341, 0, '', 'View All Task for Admin\r', '', '', ''),
-(14, '34', 342, 34, 'Completed!', '', 'Seperate Assigned and Unassigned\r', '', 'seperated |Manager: ok u may |Manager: seperated? |  | '),
-(15, '34', 343, 0, '', '', '', 'Assign Unassigned tasks', '');
+(4, '31', 311, 0, '', 'Rows to Column\r', '', '', ''),
+(5, '31', 312, 5, 'Need Clarification', '', 'Pivot option in mysql to use\r', '', ' | '),
+(6, '31', 313, 0, '', '', '', 'assign user', ''),
+(7, '32', 321, 0, '', 'Create user and admin\r', '', '', ''),
+(8, '32', 322, 4, 'Completed', '', 'Create skeleton structure for tables and view\r', '', ' | '),
+(9, '32', 323, 0, '', '', '', 'Insert data in table', ''),
+(37, '43', 431, 4, 'Completed!', 'Dashboard panel\r', '', '', ' | style? |Lead: you know u can make | pls check email for sketch | '),
+(38, '43', 432, 5, 'Completed', '', 'Count with links\r', '', ' | '),
+(39, '43', 433, 0, '', '', '', 'Seperate via hyperlink', '');
 
 -- --------------------------------------------------------
 
@@ -255,25 +251,25 @@ ALTER TABLE `admin`
 -- AUTO_INCREMENT for table `log`
 --
 ALTER TABLE `log`
-  MODIFY `id` int(12) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=256;
+  MODIFY `id` int(12) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=269;
 
 --
 -- AUTO_INCREMENT for table `task`
 --
 ALTER TABLE `task`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=43;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=44;
 
 --
 -- AUTO_INCREMENT for table `tdetail`
 --
 ALTER TABLE `tdetail`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
 
 --
 -- AUTO_INCREMENT for table `trows`
 --
 ALTER TABLE `trows`
-  MODIFY `id` int(12) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
+  MODIFY `id` int(12) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=40;
 
 --
 -- AUTO_INCREMENT for table `user`
