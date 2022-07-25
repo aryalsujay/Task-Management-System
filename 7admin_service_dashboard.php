@@ -44,7 +44,7 @@ define("ROW_PER_PAGE",2);
     width: 80%;
 }
 .greenbtn{
-    background-color: greenyellow;
+    background-color: blanchedalmond;
     border-radius: 1rem;
     padding: 0.5%;
     width: 95%;
@@ -223,19 +223,7 @@ th{
                                 </select>
                                 </div>
                             </td>
-                            <?php $uid=$row['uid']; $tid=$row['tid']; $stid=$row['stid'];$note=$row['note'];
-                            if(empty($row['t1'])){
-                                if(!empty($row['t2'])){
-                                    $t2=$row['t2'];
-                                }
-                                else{
-                                    $t3=$row['t3'];
-                                }
-                            }
-                            else{
-                                $t1=$row['t1'];
-                            }
-                            ?>
+                            <?php $uid=$row['uid']; $tid=$row['tid']; $stid=$row['stid']; $t1=$row['t1']; //$note=$row['note'];?>
                             <td>
                                 <?php
                                     $obj=new data();
@@ -249,17 +237,19 @@ th{
                                 ?>
                             </td>
                             <td>
-                                <?php if($stid % 10 ==1){
-                                    echo $t1;
-                                    }elseif($stid % 10 ==2){
-                                    echo $t2;
-                                    }else{
-                                    echo $t3;
-                                    }
-                                ?>
+                                <?php echo $t1; ?>
                             </td>
                             <td>
-                                    <?php echo "$note" . "  <textarea rows = '3' cols = '30' maxlength = '200' name = 'note'></textarea>"; ?>
+                                    <?php
+                                        $obj=new data();
+                                        $obj->setconnection();
+                                        $obj->note($stid);
+                                        $set=$obj->note($stid);
+                                        foreach($set as $row){
+                                        $note=$row['note'];
+                                    } ?> <?php
+                                        echo "$note |" . "<br>" . "  <textarea rows = '3' cols = '30' maxlength = '200' name = 'note'></textarea>"; 
+                                    ?>
 
                             </td>
                             <td>
@@ -305,7 +295,7 @@ th{
                 <div id="assignstask" class="innerright portion" style="display:none">
                     <button class="greenbtn">Assign Sub-Task</button>
 
-                    <?php //Resolved
+                    <?php
                             $u= new data;
                             $u->setconnection();
                             $u->viewstask();
@@ -323,9 +313,9 @@ th{
                             </tr>
                         </thead>
                         <tbody id='table-body'>
-                        <?php
-                            if(!empty($result)) {
-                            foreach($result as $row) {
+                        <?php 
+                            if(!empty($result)) { 
+                            foreach($result as $row) { 
                         ?>
                         <form action="9userviewtask.php" method="post" enctype="multipart/form-data">
                         <tr class='table-row'>
@@ -336,24 +326,10 @@ th{
                                 </select>
                             </div>
                             </td>
-                            <?php $uid=$row['uid']; $tid=$row['tid']; $stid=$row['stid'];?>
-
-                            <?php
-                            if(empty($row['t1'])){
-                                if(!empty($row['t2'])){
-                                    $t2=$row['t2'];
-                                }
-                                else{
-                                    $t3=$row['t3'];
-                                }
-                            }
-                            else{
-                                $t1=$row['t1'];
-                            }
-                            ?>
+                            <?php $uid=$row['uid']; $tid=$row['tid']; $stid=$row['stid']; $t1=$row['t1']; ?>
 
                             <td>
-                                <?php if(!empty($row['t1'])){
+                                <?php if($stid % 10==1){
                                     $obj=new data();
                                     $obj->setconnection();
                                     $obj->taskname($tid);
@@ -363,23 +339,15 @@ th{
                                         }
                                         echo $tname;
                                     }
+                                    
                                 ?>
                             </td>
-                            <td><?php if(empty($row['t1'])){
-                                      if(!empty($row['t2'])){
-                                        echo $row['t2'];
-                                       }
-                                       else{
-                                        if($stid % 10==1){
+                            <td><?php   if($stid % 10==1){
                                             echo $t1;
                                         }
                                         else{
-                                            echo $row['t3'];
-                                        }}
-                                       }
-                                       else{
-                                        echo $row['t1'];
-                                       }
+                                            echo $row['t1'];
+                                        }
                                 ?>
                             </td>
                             <td>
@@ -418,8 +386,8 @@ th{
                         </form>
 
                         <?php
-                            }
-                        }
+                            } 
+                        } 
                         ?>
                         </table>
                 </div>
@@ -466,19 +434,7 @@ th{
                                 </select>
                                 </div>
                             </td>
-                            <?php $uid=$row['uid']; $tid=$row['tid']; $stid=$row['stid'];$note=$row['note'];
-                            if(empty($row['t1'])){
-                                if(!empty($row['t2'])){
-                                    $t2=$row['t2'];
-                                }
-                                else{
-                                    $t3=$row['t3'];
-                                }
-                            }
-                            else{
-                                $t1=$row['t1'];
-                            }
-                            ?>
+                            <?php $uid=$row['uid']; $tid=$row['tid']; $stid=$row['stid']; $t1=$row['t1']; //$note=$row['note']; ?>
                             <td>
                                 <?php
                                     $obj=new data();
@@ -492,17 +448,21 @@ th{
                                 ?>
                             </td>
                             <td>
-                                <?php if($stid % 10 ==1){
-                                    echo $t1;
-                                    }elseif($stid % 10 ==2){
-                                    echo $t2;
-                                    }else{
-                                    echo $t3;
-                                    }
-                                ?>
+                                <?php echo $t1; ?>
                             </td>
                             <td>
-                                    <?php echo "$note" . "  <textarea rows = '3' cols = '30' maxlength = '200' name = 'note'></textarea>"; ?>
+                                    <?php
+                                    $obj=new data();
+                                    $obj->setconnection();
+                                    $obj->note($stid);
+                                    $recordset=$obj->note($stid);
+                                    foreach($recordset as $row){
+                                        $note=$row['note'];
+                                    } 
+                                    ?>
+                                    <?php
+                                        echo "$note |" . "<br>" . "  <textarea rows = '3' cols = '30' maxlength = '200' name = 'note'></textarea>"; 
+                                    ?>
                             </td>
                             <td>
                                 <?php
@@ -556,20 +516,18 @@ th{
                         <?php require_once "4.1db.php"; ?>
                         <thead>
                             <tr>
-                                <th class='table-header' width='4%'>TaskID</th>
-                                <th class='table-header' width='17%'>Tasks</th>
+                                <th class='table-header' width='20%'>Task</th>
+                                <th class='table-header' width='17%'>No. of Tasks</th>
                                 <th class='table-header' width='17%'>Not Assigned</th>
-                                <th class='table-header' width='17%'>Clarification</th>
+                                <th class='table-header' width='17%'>Need Clarification</th>
                                 <th class='table-header' width='17%'>Quality Check</th>
                                 <th class='table-header' width='17%'>Completed</th>
-                                <th class='table-header' width='17%'>Reassign</th>
+                                <th class='table-header' width='17%'>Reassigned Count</th>
                             </tr>
                         </thead>
                         <tbody id='table-body'>
                             <tr class='table-row'>
-                                <td>
-                                    ALL Tasks
-                                </td>
+                                <td> ALL TASKS </td>
                                 <td>
                                     <?php
                                         $q="SELECT * FROM trows";
@@ -618,7 +576,12 @@ th{
 
                                 </td>
                                 <td>
-                                    <button type='button' class='btn primary' style='font-family: Arial;padding 10px;'><a href="7admin_service_dashboard.php?cpid=lifecycle"><?php echo "ALL";?></button></a></td>";
+                                    <?php    
+                                        $q="SELECT * FROM log WHERE note like 'Reassigned%' ORDER BY stid ASC";
+                                        $result = mysqli_query($conn, $q);
+                                        $rc = mysqli_num_rows($result);
+                                        ?>
+                                    <button type='button' class='btn primary' style='font-family: Arial;padding 10px;'><a href="7admin_service_dashboard.php?cpid=reassigned"><?php echo $rc;?></button></a></td>";
                                 </td>
                             </tr>
                             <?php
@@ -628,10 +591,11 @@ th{
                                     $rec=$obj->fetchid();
                                     foreach($rec as $row){
                                         $tid=$row['id'];
+                                        $tname=$row['tname'];
                             ?>
                             <tr>
                                 <td>
-                                    <?php echo $tid;?>
+                                    <?php echo $tname;//echo $tid;?>
                                 </td>
                                 <td>
                                 <?php
@@ -697,7 +661,16 @@ th{
 
                                 </td>
                                 <td>
-                                    <button type='button' class='btn primary' style='font-family: Arial;padding 10px;'><a href="7admin_service_dashboard.php?cpid=lifecycle&retid=<?php echo $tid; ?>"><?php echo "ALL";?></button></a></td>";
+                                    <?php
+                                        $q="SELECT * FROM log WHERE note LIKE 'Reassigned%' AND tid='$tid' ORDER BY stid ASC";
+                                        $result = mysqli_query($conn, $q);
+
+                                        $rc = mysqli_num_rows($result);
+                                        while ($row = mysqli_fetch_array($result)) {
+                                            $tid=$row[1];
+                                        }
+                                        ?>
+                                    <button type='button' class='btn primary' style='font-family: Arial;padding 10px;'><a href="7admin_service_dashboard.php?cpid=lifecycle&retid=<?php echo $tid; ?>"><?php echo $rc;?></button></a></td>";
                                 </td>
                             </tr>
                             <?php
@@ -738,17 +711,7 @@ th{
                                 <?php
                                     $stid=$row['stid'];
                                     $tid=$row['tid'];
-                                    if(empty($row['t1'])){
-                                    if(!empty($row['t2'])){
-                                        $t2=$row['t2'];
-                                    }
-                                    else{
-                                        $t3=$row['t3'];
-                                    }
-                                    }
-                                    else{
                                     $t1=$row['t1'];
-                                    }
                                 ?>
                                 <td><?php echo $tid;?></td>
                                 <td>
@@ -764,17 +727,7 @@ th{
                                ?>
                                 </td>
                                 <td><?php
-                                if($stid % 10==1){
                                     echo $t1;
-                                }
-                                elseif($stid % 10==2){
-
-                                    echo $t2;
-                                }
-                                else{
-                                    echo $t3;
-                                }
-
                                 ?>
                                 </td>
                             </tr>
@@ -809,17 +762,7 @@ th{
                                 <?php
                                     $stid=$row['stid'];
                                     $tid=$row['tid'];
-                                    if(empty($row['t1'])){
-                                    if(!empty($row['t2'])){
-                                        $t2=$row['t2'];
-                                    }
-                                    else{
-                                        $t3=$row['t3'];
-                                    }
-                                    }
-                                    else{
                                     $t1=$row['t1'];
-                                    }
                                 ?>
                                 <td><?php echo $tid;?></td>
                                 <td>
@@ -835,17 +778,7 @@ th{
                                ?>
                                 </td>
                                 <td><?php
-                                if($stid % 10==1){
                                     echo $t1;
-                                }
-                                elseif($stid % 10==2){
-
-                                    echo $t2;
-                                }
-                                else{
-                                    echo $t3;
-                                }
-
                                 ?>
                                 </td>
                             </tr>
@@ -890,17 +823,7 @@ th{
                                 <?php
                                     $stid=$row['stid'];
                                     $tid=$row['tid'];
-                                    if(empty($row['t1'])){
-                                    if(!empty($row['t2'])){
-                                        $t2=$row['t2'];
-                                    }
-                                    else{
-                                        $t3=$row['t3'];
-                                    }
-                                    }
-                                    else{
                                     $t1=$row['t1'];
-                                    }
                                 ?>
                                 <td><?php echo $tid;?></td>
                                 <td>
@@ -916,17 +839,7 @@ th{
                                ?>
                                 </td>
                                 <td><?php
-                                if($stid % 10==1){
                                     echo $t1;
-                                }
-                                elseif($stid % 10==2){
-
-                                    echo $t2;
-                                }
-                                else{
-                                    echo $t3;
-                                }
-
                                 ?>
                                 </td>
                             </tr>
@@ -964,17 +877,7 @@ th{
                                 <?php
                                     $stid=$row['stid'];
                                     $tid=$row['tid'];
-                                    if(empty($row['t1'])){
-                                    if(!empty($row['t2'])){
-                                        $t2=$row['t2'];
-                                    }
-                                    else{
-                                        $t3=$row['t3'];
-                                    }
-                                    }
-                                    else{
                                     $t1=$row['t1'];
-                                    }
                                 ?>
                                 <td><?php echo $tid;?></td>
                                 <td>
@@ -990,17 +893,7 @@ th{
                                ?>
                                 </td>
                                 <td><?php
-                                if($stid % 10==1){
                                     echo $t1;
-                                }
-                                elseif($stid % 10==2){
-
-                                    echo $t2;
-                                }
-                                else{
-                                    echo $t3;
-                                }
-
                                 ?>
                                 </td>
                             </tr>
@@ -1047,17 +940,7 @@ th{
                                     $stid=$row['stid'];
                                     $tid=$row['tid'];
                                     $uid=$row['uid'];
-                                    if(empty($row['t1'])){
-                                    if(!empty($row['t2'])){
-                                        $t2=$row['t2'];
-                                    }
-                                    else{
-                                        $t3=$row['t3'];
-                                    }
-                                    }
-                                    else{
                                     $t1=$row['t1'];
-                                    }
                                 ?>
                                 <td><?php echo $tid;?></td>
                                 <td>
@@ -1073,17 +956,7 @@ th{
                                ?>
                                 </td>
                                 <td><?php
-                                if($stid % 10==1){
                                     echo $t1;
-                                }
-                                elseif($stid % 10==2){
-
-                                    echo $t2;
-                                }
-                                else{
-                                    echo $t3;
-                                }
-
                                 ?>
                                 </td>
                                 <td>
@@ -1133,17 +1006,7 @@ th{
                                     $stid=$row['stid'];
                                     $tid=$row['tid'];
                                     $uid=$row['uid'];
-                                    if(empty($row['t1'])){
-                                    if(!empty($row['t2'])){
-                                        $t2=$row['t2'];
-                                    }
-                                    else{
-                                        $t3=$row['t3'];
-                                    }
-                                    }
-                                    else{
                                     $t1=$row['t1'];
-                                    }
                                 ?>
                                 <td><?php echo $tid;?></td>
                                 <td>
@@ -1159,17 +1022,7 @@ th{
                                ?>
                                 </td>
                                 <td><?php
-                                if($stid % 10==1){
                                     echo $t1;
-                                }
-                                elseif($stid % 10==2){
-
-                                    echo $t2;
-                                }
-                                else{
-                                    echo $t3;
-                                }
-
                                 ?>
                                 </td>
                                 <td>
@@ -1227,17 +1080,7 @@ th{
                                     $stid=$row['stid'];
                                     $tid=$row['tid'];
                                     $uid=$row['uid'];
-                                    if(empty($row['t1'])){
-                                    if(!empty($row['t2'])){
-                                        $t2=$row['t2'];
-                                    }
-                                    else{
-                                        $t3=$row['t3'];
-                                    }
-                                    }
-                                    else{
                                     $t1=$row['t1'];
-                                    }
                                 ?>
                                 <td><?php echo $tid;?></td>
                                 <td>
@@ -1253,17 +1096,7 @@ th{
                                ?>
                                 </td>
                                 <td><?php
-                                if($stid % 10==1){
                                     echo $t1;
-                                }
-                                elseif($stid % 10==2){
-
-                                    echo $t2;
-                                }
-                                else{
-                                    echo $t3;
-                                }
-
                                 ?>
                                 </td>
                                 <td>
@@ -1312,17 +1145,7 @@ th{
                                     $stid=$row['stid'];
                                     $tid=$row['tid'];
                                     $uid=$row['uid'];
-                                    if(empty($row['t1'])){
-                                    if(!empty($row['t2'])){
-                                        $t2=$row['t2'];
-                                    }
-                                    else{
-                                        $t3=$row['t3'];
-                                    }
-                                    }
-                                    else{
                                     $t1=$row['t1'];
-                                    }
                                 ?>
                                 <td><?php echo $tid;?></td>
                                 <td>
@@ -1338,17 +1161,7 @@ th{
                                ?>
                                 </td>
                                 <td><?php
-                                if($stid % 10==1){
                                     echo $t1;
-                                }
-                                elseif($stid % 10==2){
-
-                                    echo $t2;
-                                }
-                                else{
-                                    echo $t3;
-                                }
-
                                 ?>
                                 </td>
                                 <td>
@@ -1376,7 +1189,7 @@ th{
                 </div>
             </div>
 
-            <!-- Review Needed Tasks -->
+            <!-- Completed Tasks -->
             <div class="rightinnerdiv">
                 <div id="complete" class="innerright portion" style="<?php if(!empty($_REQUEST['ctid'])||(!empty($_REQUEST['cctid']))){$viewid=$_REQUEST['ctid'];$tid=$_REQUEST['cctid'];}else{echo "display:none";}?>">
                         <button class="greenbtn">Completed Task</button>
@@ -1407,17 +1220,7 @@ th{
                                     $stid=$row['stid'];
                                     $tid=$row['tid'];
                                     $uid=$row['uid'];
-                                    if(empty($row['t1'])){
-                                    if(!empty($row['t2'])){
-                                        $t2=$row['t2'];
-                                    }
-                                    else{
-                                        $t3=$row['t3'];
-                                    }
-                                    }
-                                    else{
                                     $t1=$row['t1'];
-                                    }
                                 ?>
                                 <td><?php echo $tid;?></td>
                                 <td>
@@ -1433,17 +1236,7 @@ th{
                                ?>
                                 </td>
                                 <td><?php
-                                if($stid % 10==1){
                                     echo $t1;
-                                }
-                                elseif($stid % 10==2){
-
-                                    echo $t2;
-                                }
-                                else{
-                                    echo $t3;
-                                }
-
                                 ?>
                                 </td>
                                 <td>
@@ -1492,17 +1285,7 @@ th{
                                     $stid=$row['stid'];
                                     $tid=$row['tid'];
                                     $uid=$row['uid'];
-                                    if(empty($row['t1'])){
-                                    if(!empty($row['t2'])){
-                                        $t2=$row['t2'];
-                                    }
-                                    else{
-                                        $t3=$row['t3'];
-                                    }
-                                    }
-                                    else{
                                     $t1=$row['t1'];
-                                    }
                                 ?>
                                 <td><?php echo $tid;?></td>
                                 <td>
@@ -1518,17 +1301,7 @@ th{
                                ?>
                                 </td>
                                 <td><?php
-                                if($stid % 10==1){
                                     echo $t1;
-                                }
-                                elseif($stid % 10==2){
-
-                                    echo $t2;
-                                }
-                                else{
-                                    echo $t3;
-                                }
-
                                 ?>
                                 </td>
                                 <td>
@@ -1563,10 +1336,10 @@ th{
                         <?php
                             if(!empty($tid)){
 
-                        $obj= new data;
+                            $obj= new data;
                             $obj->setconnection();
-                            $obj->log();
-                            $recordset=$obj->log();
+                            $obj->logid($tid);
+                            $recordset=$obj->logid($tid);
 
 
                         ?>
@@ -1584,35 +1357,17 @@ th{
                         <tbody id='table-body'>
                             <?php
                             foreach($recordset as $row){
-                                $stid=$row['stid'];
-                                //$tid=substr($stid,0,-1);
-                            }
-                            $obj= new data;
-                            $obj->setconnection();
-                            $obj->logid($stid);
-                            $record=$obj->logid($stid);
-                            foreach($record as $row){
                             ?>
                             <tr class='table-row'>
                                 <?php
                                     $stid=$row['stid'];
-                                    $tid=substr($stid,0,-1);
-
                                     $uid=$row['uid'];
                                     $note=$row['note'];
 
                                 ?>
                                 <td>
                                 <?php
-                                        $obj=new data();
-                                        $obj->setconnection();
-                                        $obj->staskname($stid);
-                                        $ta=$obj->staskname($stid);
-                                            foreach($ta as $row){
-                                                $tid=$row['tid'];
-
-                                            }
-                                            echo $tid . "& " . $stid;
+                                        echo $tid . "& " . $stid;
                                     ?>
                                     </td>
                                 <td><?php
@@ -1634,17 +1389,7 @@ th{
                                 $obj->staskname($stid);
                                 $tc=$obj->staskname($stid);
                                     foreach($tc as $row){
-                                        if($stid % 10==1){
                                            $t=$row['t1'];
-                                        }
-                                        elseif($stid % 10==2){
-
-                                            $t= $row['t2'];
-                                        }
-                                        else{
-                                            $t= $row['t3'];
-                                        }
-
                                     }
                                     echo $t;
 
@@ -1687,7 +1432,7 @@ th{
 
                         <thead>
                             <tr>
-                                <th class='table-header' width='17%'>Task ID</th>
+                                <th class='table-header' width='17%'>TID & STID</th>
                                 <th class='table-header' width='17%'>Task Name</th>
                                 <th class='table-header' width='17%'>Sub-Task</th>
                                 <th class='table-header' width='17%'>Status</th>
@@ -1701,30 +1446,21 @@ th{
                             <tr class='table-row'>
                                 <?php
                                     $stid=$row['stid'];
-
-                                    //$tid=$row['tid'];
+                                    $tid=$row['tid'];
                                     $uid=$row['uid'];
                                     $note=$row['note'];
 
                                 ?>
                                 <td>
                                 <?php
-                                        $obj=new data();
-                                        $obj->setconnection();
-                                        $obj->staskname($stid);
-                                        $recordset=$obj->staskname($stid);
-                                            foreach($recordset as $row){
-                                                $tid=$row['tid'];
-
-                                            }
-                                            echo $tid . "& " . $stid;
+                                    echo $tid . "& " . $stid;
                                     ?>
                                     </td>
                                 <td><?php
                                         $obj=new data();
                                         $obj->setconnection();
-                                        $obj->staskname($stid);
-                                        $recordset=$obj->staskname($stid);
+                                        $obj->taskname($tid);
+                                        $recordset=$obj->taskname($tid);
                                             foreach($recordset as $row){
                                                 $tname=$row['tname'];
 
@@ -1739,16 +1475,7 @@ th{
                                 $obj->staskname($stid);
                                 $recordset=$obj->staskname($stid);
                                     foreach($recordset as $row){
-                                        if($stid % 10==1){
-                                           $t=$row['t1'];
-                                        }
-                                        elseif($stid % 10==2){
-
-                                            $t= $row['t2'];
-                                        }
-                                        else{
-                                            $t= $row['t3'];
-                                        }
+                                        $t=$row['t1'];
 
                                     }
                                     echo $t;

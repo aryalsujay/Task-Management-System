@@ -49,7 +49,6 @@ session_start();
             return $data;
         }
         //Fill status of the task with note if needed
-        //Resolved
         function taskstatus($stid,$status,$uid,$note){
             $this->stid=$stid;
             $this->status=$status;
@@ -60,13 +59,15 @@ session_start();
             foreach($rec1 as $row){
                 $tid=$row['tid'];
             }
-            $q="SELECT * FROM trows WHERE stid='$stid'";
+            $q="SELECT * FROM note WHERE stid='$stid'";
             $result=$this->connection->query($q);
             foreach($result as $row){
                 $old_note=$row['note'];
             }
+            $nq="UPDATE note SET note='$old_note | $note',uid='$uid' WHERE stid='$stid'";
+            $this->connection->exec($nq);
             if($status=='Completed'){
-                $q2="UPDATE trows SET status='$status',note='$old_note | $note' WHERE stid='$stid'";
+                $q2="UPDATE trows SET status='$status' WHERE stid='$stid'";
                 if($this->connection->exec($q2)){
                     $q3="INSERT INTO log(id, tid, stid, uid, note, done)VALUES('','$tid','$stid','$uid','$status','0')";
                     $this->connection->exec($q3);
@@ -77,7 +78,7 @@ session_start();
                 }
             }
             else{
-                $q2="UPDATE trows SET status='$status',note='$old_note | $note' WHERE stid='$stid'";
+                $q2="UPDATE trows SET status='$status' WHERE stid='$stid'";
                 if($this->connection->exec($q2)){
                     $q3="INSERT INTO log(id, tid, stid, uid, note, done)VALUES('','$tid','$stid','$uid','$status','0')";
                     $this->connection->exec($q3);
@@ -145,19 +146,45 @@ session_start();
             $this->tdetail=$tdetail;
             $q="INSERT INTO task(id, tname, detail)VALUES('', '$tname', '$tdetail')";
             $this->connection->exec($q);
-            /* $q1="SELECT * FROM task";
-            $recordSet=$this->connection->query($q1);
-            foreach($recordSet as $row){
-                $tid=$row['id'];
-                $t1=$row['detail'];
-                //t2,t3 .. to add after delimiter
+
+            $q1="SELECT * FROM task";
+            $recordset=$this->connection->query($q1);
+            foreach($recordset as $rows){
+                $tid=$rows['id'];
+                $allst=explode("\n",$rows['detail']);
             }
-            $q2="INSERT INTO tdetail(id, tid, t1, t2, t3)VALUES('', '$tid','$t1','','')"; */
-            /*$q3="Select id,name,detail, left(detail,charindex(',',detail)-1)as t1,
-            right(detail, len(detail)-charindex(',',detail)-2) as t3
-            from task";*/
-            //$q3="SELECT id, tname, detail, SUBSTRING_INDEX(detail, ',', 1) as t1,SUBSTRING_INDEX(SUBSTRING_INDEX(detail, ',', 2), ',', -1) as t2,SUBSTRING_INDEX(SUBSTRING_INDEX(detail, ',', 3), ',', -1) as t3 from task";
-            $q3="SELECT id, tname, detail, SUBSTRING_INDEX(detail, '\n', 1) as t1,SUBSTRING_INDEX(SUBSTRING_INDEX(detail, '\n', 2), '\n', -1) as t2,SUBSTRING_INDEX(SUBSTRING_INDEX(detail, '\n', 3), '\n', -1) as t3 from task";
+            //$key=key($allst);
+            $count=1;
+            foreach($allst as $row){
+                $st=$row;
+                $stid=$tid . $count;
+                $q2="INSERT INTO trows(id,tid,stid,uid,t1)VALUES('', '$tid', '$stid','','$st')";
+                $noteq="INSERT INTO note(id,stid,uid,note)VALUES('', '$stid','','')";
+                $this->connection->exec($q2);
+                $this->connection->exec($noteq);
+                $count++;
+            }
+            if($this->connection->exec($q2)){
+                $q4="SELECT * FROM trows";
+                $this->connection->query($q4);
+                $rec=$this->connection->query($q4);
+                foreach($rec as $row){
+                    $id=$row['id'];
+                }
+                $q3="DELETE FROM trows ORDER BY id desc LIMIT 1";
+                $this->connection->exec($q3);
+                
+                $q5="ALTER TABLE trows AUTO_INCREMENT=$id";
+                $this->connection->exec($q5);
+                header("Location:7admin_service_dashboard.php?msg=New task added");
+            }
+            else{
+                header("Location:7admin_service_dashboard.php?msg=Error");
+            }
+            
+            //Substring for 3 sub-tasks
+
+            /*$q3="SELECT id, tname, detail, SUBSTRING_INDEX(detail, '\n', 1) as t1,SUBSTRING_INDEX(SUBSTRING_INDEX(detail, '\n', 2), '\n', -1) as t2,SUBSTRING_INDEX(SUBSTRING_INDEX(detail, '\n', 3), '\n', -1) as t3 from task";
             /*$q3="SELECT id, detail, SPLIT_STR(detail, ' ', 1) as t1, SPLIT_STR(detail, ' ', 2) as t2 SPLIT_STR(detail, ' ', 3) as t3 FROM task";
             $q1="CREATE FUNCTION SPLIT_STR(
                 x VARCHAR(255),
@@ -169,8 +196,8 @@ session_start();
                   RETURN REPLACE(SUBSTRING(SUBSTRING_INDEX(x, delim, pos),
                      LENGTH(SUBSTRING_INDEX(x, delim, pos -1)) + 1),
                      delim, '\n');
-              END";
-            $recordSet=$this->connection->query($q1); */
+              END"; */
+            /*$recordSet=$this->connection->query($q1);
             $recordset=$this->connection->query($q3);
             foreach($recordset as $rows){
                 $tid=$rows['id'];
@@ -193,7 +220,7 @@ session_start();
             }
             else{
                 header("Location:7admin_service_dashboard.php?msg=Error");
-            }
+            } */
         }
         //Add person Admin
         function addperson($name,$email,$pass,$type){
@@ -230,7 +257,7 @@ session_start();
             $data=$this->connection->query($q);
             return $data;
         }
-        //View Task as admin
+        //View Task as admin - tdetail
         function viewtask(){
             $q="SELECT * FROM trows as td INNER JOIN trows AS t ON td.id=t.tid ORDER BY td.id ASC";
             $data=$this->connection->query($q);
@@ -358,20 +385,24 @@ session_start();
             $this->user=$user;
             $this->note=$note;
             $this->uid=$uid;
-            $q="SELECT * FROM trows WHERE stid='$stid'";
+            $tid=substr($stid,0,-1);
+            $q="SELECT * FROM note WHERE stid='$stid'";
             $result=$this->connection->query($q);
             foreach($result as $row){
                 $old_note=$row['note'];
             }
+            $nq="UPDATE note SET note='$old_note |Lead: $note',uid='$uid' WHERE stid='$stid'";
+            $this->connection->exec($nq);
             if($user!='Select'){
                 $q1="SELECT * FROM user WHERE name='$user'";
                 $rec=$this->connection->query($q1);
                 foreach($rec as $row){
                     $uid=$row['id'];
                 }
-                $q2="UPDATE trows SET note='$old_note |Lead: $note',uid='$uid' WHERE stid='$stid'";
+                
+                $q2="UPDATE trows SET uid='$uid' WHERE stid='$stid'";
                 if($this->connection->exec($q2)){
-                    $q3="INSERT INTO log(id, tid, stid, uid, note, done)VALUES('','','$stid','$uid','Reassigned to $user - Admin','')";
+                    $q3="INSERT INTO log(id, tid, stid, uid, note, done)VALUES('','$tid','$stid','$uid','Reassigned to $user - Admin','')";
                     $this->connection->exec($q3);
                     header("Location:7admin_service_dashboard.php?msg=Changed_to_$user");
                 }
@@ -386,15 +417,14 @@ session_start();
                     $uname=$row['name'];
                 }
 
-                $q4="UPDATE trows SET note='$old_note |Lead: $note' WHERE stid='$stid'";
+                $q4="UPDATE trows SET stid='$stid' WHERE stid='$stid'";
                 if($this->connection->exec($q4)){
-
-                    $q5="INSERT INTO log(id, tid, stid, uid, note, done)VALUES('','','$stid','$uid','Reassigned to $uname','')";
+                    $q5="INSERT INTO log(id, tid, stid, uid, note, done)VALUES('','$tid','$stid','$uid','Reassigned to $uname','')";
                     $this->connection->exec($q5);
                     header("Location:7admin_service_dashboard.php?msg=Reassigned to $uname");
                 }
                 else{
-                    header("Location:7admin_service_dashboard.php?msg=Reassigned_failed");
+                    header("Location:7admin_service_dashboard.php?msg=Reassigned");
                 }
             }
 
@@ -404,7 +434,8 @@ session_start();
             $this->stid=$stid;
             $this->user=$user;
             $this->note=$note;
-            $q="SELECT * FROM trows WHERE stid='$stid'";
+            $tid=substr($stid,0,-1);
+            $q="SELECT * FROM note WHERE stid='$stid'";
             $result=$this->connection->query($q);
             foreach($result as $row){
                 $old_note=$row['note'];
@@ -415,9 +446,11 @@ session_start();
                 foreach($rec as $row){
                     $uid=$row['id'];
                 }
-                $q2="UPDATE trows SET note='$old_note |Manager: $note',uid='$uid' WHERE stid='$stid'";
+                $q2="UPDATE trows SET uid='$uid' WHERE stid='$stid'";
+                $nq="UPDATE note SET note='$old_note |Manager: $note',uid='$uid' WHERE stid='$stid'";
+                $this->connection->exec($nq);
                 if($this->connection->exec($q2)){
-                    $q3="INSERT INTO log(id, tid, stid, uid, note, done)VALUES('','','$stid','$uid','Reassigned to $user - Manger','')";
+                    $q3="INSERT INTO log(id, tid, stid, uid, note, done)VALUES('','$tid','$stid','$uid','Reassigned to $user - Manager','')";
                     $this->connection->exec($q3);
                     header("Location:7admin_service_dashboard.php?msg=Changed_to_$user");
                 }
@@ -426,14 +459,16 @@ session_start();
                 }
             }
             else{
-                $q4="UPDATE trows SET note='$old_note |Manager: $note' WHERE stid='$stid'";
-                if($this->connection->exec($q4)){
-                    $q5="INSERT INTO log(id, tid, stid, uid, note, done)VALUES('','','$stid','','Reassigned_to_$user','')";
+                //$q4="UPDATE trows SET note='$old_note |Manager: $note' WHERE stid='$stid'";
+                $nq="UPDATE note SET note='$old_note |Manager: $note' WHERE stid='$stid'";
+                //$this->connection->exec($nq);
+                if($this->connection->exec($nq)){
+                    $q5="INSERT INTO log(id, tid, stid, uid, note, done)VALUES('','$tid','$stid','','Reassigned_to_$user','')";
                     $this->connection->exec($q5);
                     header("Location:7admin_service_dashboard.php?msg=Reassigned_to_$user");
                 }
                 else{
-                    header("Location:7admin_service_dashboard.php?msg=Reassigned_failed");
+                    header("Location:7admin_service_dashboard.php?msg=Reassigned");
                 }
             }
 
@@ -444,15 +479,23 @@ session_start();
             $this->user=$user;
             $this->note=$note;
             $this->uid=$uid;
+            $tid=substr($stid,0,-1);
             $q="SELECT * FROM trows WHERE stid='$stid'";
             $result=$this->connection->query($q);
             foreach($result as $row){
-                $old_note=$row['note'];
+                //$old_note=$row['note'];
                 $old_status=$row['status'];
             }
-                $q2="UPDATE trows SET note='$old_note | $note',uid='$uid',status='$old_status!' WHERE stid='$stid'";
+            $nq1="SELECT * FROM note WHERE stid='$stid'";
+            $result=$this->connection->query($nq1);
+            foreach($result as $row){
+                $old_note=$row['note'];
+            }
+                $q2="UPDATE trows SET uid='$uid',status='$old_status!' WHERE stid='$stid'";
+                $nq="UPDATE note SET note='$old_note | $note',uid='$uid' WHERE stid='$stid'";
+                $this->connection->exec($nq);
                 if($this->connection->exec($q2)){
-                    $q3="INSERT INTO log(id, tid, stid, uid, note, done)VALUES('','','$stid','$uid','$old_status!','1')";
+                    $q3="INSERT INTO log(id, tid, stid, uid, note, done)VALUES('','$tid','$stid','$uid','$old_status!','1')";
                     $this->connection->exec($q3);
                     header("Location:7admin_service_dashboard.php?msg=Task_Completed");
                 }
@@ -476,13 +519,19 @@ session_start();
         }
         //Reassigned
         function log(){
-            $q="SELECT * FROM log where note like '%assigned%' ORDER BY stid ASC";
+            $q="SELECT * FROM log where note like 'Reassigned%' ORDER BY stid ASC";
             $data=$this->connection->query($q);
             return $data;
         }
         //Reassigned stid
-        function logid($stid){
-            $q="SELECT * FROM log where note like '%assigned%' AND stid='$stid' ORDER BY stid ASC";
+        function logid($tid){
+            $q="SELECT * FROM log where note like 'Reassigned%' AND tid='$tid' ORDER BY stid ASC";
+            $data=$this->connection->query($q);
+            return $data;
+        }
+        //Collect note from note table for admin
+        function note($stid){
+            $q="SELECT * FROM note WHERE stid='$stid' ORDER BY id ASC";
             $data=$this->connection->query($q);
             return $data;
         }

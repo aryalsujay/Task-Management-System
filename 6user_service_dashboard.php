@@ -79,7 +79,6 @@
                 <button class="greenbtn">Welcome</button>
                 <button class="greenbtn" onclick="openpart('myaccount')">My Account</button>
                 <button class="greenbtn" onclick="openpart('assignedtask')">Assigned Task</button>
-                <button class="greenbtn" onclick="openpart('bookreport')">Book Report</button>
                 <a href="1index.php"><button class="greenbtn">LOGOUT</button></a>
             </div>
 
@@ -138,18 +137,8 @@
                         ?>
                         <form action="11usertask.php" method="post" enctype="multipart/form-data">
                         <tr class='table-row'>
-                            <?php $tid=$row['tid']; $stid=$row['stid']; $note=$row['note'];
-                                if(empty($row['t1'])){
-                                    if(!empty($row['t2'])){
-                                        $t2=$row['t2'];
-                                    }
-                                    else{
-                                        $t3=$row['t3'];
-                                    }
-                                }
-                                else{
+                            <?php $tid=$row['tid']; $stid=$row['stid']; //$note=$row['note'];
                                     $t1=$row['t1'];
-                                }
                             ?>
 
                             <td>
@@ -175,19 +164,7 @@
                                ?>
                             </td>
                             <td>
-                                <?php
-
-                                    if($stid % 10==1){
-                                        echo $t1;
-                                    }
-                                    elseif($stid % 10==2){
-
-                                        echo $t2;
-                                    }
-                                    else{
-                                        echo $t3;
-                                    }
-                                ?>
+                                <?php echo $t1;?>
                             </td>
 
                             <td><!-- onchange="yesnoCheck(this);" -->
@@ -199,14 +176,20 @@
                             </td>
 
                             <td>
-                            <!-- <div id="ifYes" style="display: none;"> -->
-                            <?php echo "$note |" . "  <textarea rows = '3' cols = '30' maxlength = '200' name = 'note'></textarea>"; ?>
-
-                            <!-- </div> -->
+                                <?php
+                                    $obj=new data();
+                                    $obj->setconnection();
+                                    $obj->note($stid);
+                                    $recordset=$obj->note($stid);
+                                    foreach($recordset as $row){
+                                        $note=$row['note'];
+                                    }
+                                    echo "$note |" . "<br>" . "  <textarea rows = '3' cols = '30' maxlength = '200' name = 'note'></textarea>"; 
+                                ?>
                             </td>
 
                             <td><input class="btn primary" type="submit" value="Submit"></button></td>
-                            <td><?php //Resolved
+                            <td><?php 
                                     $obj=new data();
                                     $obj->setconnection();
                                     $obj->status($stid);

@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.1.3
+-- version 5.1.1
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 16, 2022 at 07:54 PM
--- Server version: 10.4.24-MariaDB
--- PHP Version: 7.4.29
+-- Generation Time: Jul 25, 2022 at 02:42 PM
+-- Server version: 10.4.20-MariaDB
+-- PHP Version: 7.4.21
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -25,7 +25,7 @@ DELIMITER $$
 --
 -- Functions
 --
-CREATE DEFINER=`root`@`localhost` FUNCTION `SPLIT_STR` (`x` VARCHAR(255), `delim` VARCHAR(12), `pos` INT) RETURNS VARCHAR(255) CHARSET utf8mb4 DETERMINISTIC BEGIN
+CREATE DEFINER=`root`@`localhost` FUNCTION `SPLIT_STR` (`x` VARCHAR(255), `delim` VARCHAR(12), `pos` INT) RETURNS VARCHAR(255) CHARSET utf8mb4 BEGIN
                   RETURN REPLACE(SUBSTRING(SUBSTRING_INDEX(x, delim, pos),
                      LENGTH(SUBSTRING_INDEX(x, delim, pos -1)) + 1),
                      delim, '
@@ -76,17 +76,42 @@ CREATE TABLE `log` (
 --
 
 INSERT INTO `log` (`id`, `tid`, `stid`, `uid`, `note`, `done`) VALUES
-(258, 43, 431, 4, 'Assigned to Amar', 0),
-(259, 43, 432, 5, 'Assigned to Sujay', 0),
-(260, 43, 431, 4, 'Need Clarification', 0),
-(261, 0, 431, 4, 'Reassigned to ', 0),
-(262, 43, 431, 4, 'Completed', 0),
-(263, 0, 431, 4, 'Completed!', 1),
-(264, 43, 432, 5, 'Completed', 0),
-(265, 32, 322, 4, 'Assigned to Amar', 0),
-(266, 31, 312, 5, 'Assigned to Sujay', 0),
-(267, 31, 312, 5, 'Need Clarification', 0),
-(268, 32, 322, 4, 'Completed', 0);
+(312, 48, 481, 4, 'Assigned to Amar', 0),
+(313, 48, 482, 5, 'Assigned to Sujay', 0),
+(314, 48, 482, 5, 'Need Clarification', 0),
+(315, 47, 471, 5, 'Completed', 0),
+(316, 48, 482, 4, 'Reassigned to Amar - Admin', 0),
+(317, 47, 471, 4, 'Reassigned to Amar - Manager', 0),
+(318, 47, 471, 4, 'Completed!', 1),
+(319, 48, 482, 5, 'Completed', 0);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `note`
+--
+
+CREATE TABLE `note` (
+  `id` int(11) NOT NULL,
+  `stid` int(11) NOT NULL,
+  `uid` int(11) NOT NULL,
+  `note` varchar(500) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `note`
+--
+
+INSERT INTO `note` (`id`, `stid`, `uid`, `note`) VALUES
+(1, 471, 4, ' | how | ok |  |  |Manager:  |Manager:  | '),
+(2, 472, 0, ''),
+(3, 473, 0, ''),
+(4, 474, 0, ''),
+(5, 481, 0, ''),
+(6, 482, 5, ' |  |  |  |  |  |Lead: ok now |Lead:  |Lead:  |Lead:  |Lead:  | '),
+(7, 483, 0, ''),
+(8, 484, 0, ''),
+(9, 485, 0, '');
 
 -- --------------------------------------------------------
 
@@ -105,41 +130,8 @@ CREATE TABLE `task` (
 --
 
 INSERT INTO `task` (`id`, `tname`, `detail`) VALUES
-(31, 'Column Maintain', 'Rows to Column\r\nPivot option in mysql to use\r\nassign user'),
-(32, 'Create a view', 'Create user and admin\r\nCreate skeleton structure for tables and view\r\nInsert data in table'),
-(43, 'Create final report', 'Dashboard panel\r\nCount with links\r\nSeperate via hyperlink');
-
--- --------------------------------------------------------
-
---
--- Table structure for table `tdetail`
---
-
-CREATE TABLE `tdetail` (
-  `id` int(11) NOT NULL,
-  `tid` int(11) NOT NULL,
-  `uid` int(12) NOT NULL,
-  `assigned` int(12) NOT NULL,
-  `t1` varchar(200) NOT NULL,
-  `t2` varchar(200) NOT NULL,
-  `t3` varchar(200) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
---
--- Dumping data for table `tdetail`
---
-
-INSERT INTO `tdetail` (`id`, `tid`, `uid`, `assigned`, `t1`, `t2`, `t3`) VALUES
-(24, 31, 1, 1, 'Rows to Column\r', 'Pivot option in mysql to use\r', 'assign user'),
-(25, 32, 1, 1, 'Create user and admin\r', 'Create skeleton structure for tables and view\r', 'Insert data in table'),
-(26, 33, 1, 1, 'Option display in the table\r', 'Add assign option alongside\r', 'Assigned and Unassigned signal to be displayed'),
-(27, 34, 4, 1, 'View All Task for Admin\r', 'Seperate Assigned and Unassigned\r', 'Assign Unassigned tasks'),
-(31, 38, 0, 0, '1\r', '2\r', '3'),
-(32, 39, 0, 0, '1\r', '2\r', '3'),
-(33, 40, 0, 0, '1\r', '2\r', '3'),
-(34, 41, 0, 0, '123\r', '2\r', '3'),
-(35, 42, 0, 0, 'd\r', 'd\r', 'd'),
-(36, 43, 0, 0, 'Dashboard panel\r', 'Count with links\r', 'Seperate via hyperlink');
+(47, 'new note', 'add\r\nnew now\r\nhow\r\nwhen'),
+(48, 'Create final report', 'Dashboard panel\r\nCount with links\r\nSeperate via hyperlink\r\nCreate skeleton structure for tables and view\r\nInsert data in table');
 
 -- --------------------------------------------------------
 
@@ -153,26 +145,23 @@ CREATE TABLE `trows` (
   `stid` double NOT NULL,
   `uid` int(12) NOT NULL,
   `status` varchar(255) NOT NULL,
-  `t1` varchar(255) NOT NULL,
-  `t2` varchar(255) NOT NULL,
-  `t3` varchar(255) NOT NULL,
-  `note` varchar(255) NOT NULL
+  `t1` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `trows`
 --
 
-INSERT INTO `trows` (`id`, `tid`, `stid`, `uid`, `status`, `t1`, `t2`, `t3`, `note`) VALUES
-(4, '31', 311, 0, '', 'Rows to Column\r', '', '', ''),
-(5, '31', 312, 5, 'Need Clarification', '', 'Pivot option in mysql to use\r', '', ' | '),
-(6, '31', 313, 0, '', '', '', 'assign user', ''),
-(7, '32', 321, 0, '', 'Create user and admin\r', '', '', ''),
-(8, '32', 322, 4, 'Completed', '', 'Create skeleton structure for tables and view\r', '', ' | '),
-(9, '32', 323, 0, '', '', '', 'Insert data in table', ''),
-(37, '43', 431, 4, 'Completed!', 'Dashboard panel\r', '', '', ' | style? |Lead: you know u can make | pls check email for sketch | '),
-(38, '43', 432, 5, 'Completed', '', 'Count with links\r', '', ' | '),
-(39, '43', 433, 0, '', '', '', 'Seperate via hyperlink', '');
+INSERT INTO `trows` (`id`, `tid`, `stid`, `uid`, `status`, `t1`) VALUES
+(52, '47', 471, 4, 'Completed!', 'add\r'),
+(53, '47', 472, 0, '', 'new now\r'),
+(54, '47', 473, 1, 'Need Clarification', 'how\r'),
+(55, '47', 474, 0, '', 'when'),
+(56, '48', 481, 4, '', 'Dashboard panel\r'),
+(57, '48', 482, 4, 'Completed', 'Count with links\r'),
+(58, '48', 483, 0, '', 'Seperate via hyperlink\r'),
+(59, '48', 484, 0, '', 'Create skeleton structure for tables and view\r'),
+(60, '48', 485, 0, '', 'Insert data in table');
 
 -- --------------------------------------------------------
 
@@ -214,15 +203,15 @@ ALTER TABLE `log`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `task`
+-- Indexes for table `note`
 --
-ALTER TABLE `task`
+ALTER TABLE `note`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `tdetail`
+-- Indexes for table `task`
 --
-ALTER TABLE `tdetail`
+ALTER TABLE `task`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -251,25 +240,25 @@ ALTER TABLE `admin`
 -- AUTO_INCREMENT for table `log`
 --
 ALTER TABLE `log`
-  MODIFY `id` int(12) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=269;
+  MODIFY `id` int(12) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=320;
+
+--
+-- AUTO_INCREMENT for table `note`
+--
+ALTER TABLE `note`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `task`
 --
 ALTER TABLE `task`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=44;
-
---
--- AUTO_INCREMENT for table `tdetail`
---
-ALTER TABLE `tdetail`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=49;
 
 --
 -- AUTO_INCREMENT for table `trows`
 --
 ALTER TABLE `trows`
-  MODIFY `id` int(12) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=40;
+  MODIFY `id` int(12) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=61;
 
 --
 -- AUTO_INCREMENT for table `user`
