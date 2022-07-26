@@ -1,5 +1,5 @@
 <?php include "5data_class.php";
-//$adminid=$_GET['adminid'];
+//$adminid=$_GET['adminid'];//done
 define("ROW_PER_PAGE",2);
     if(empty($_SESSION['adminid'])){
         header("Location:1index.php?msg=Invalid");
