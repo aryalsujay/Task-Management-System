@@ -281,7 +281,7 @@ session_start();
             $data=$this->connection->query($q);
             return $data;
         }
-        //Assign User a task
+        //Assign User an entire task - old
         function assigntask($name,$tid){
             $this->name=$name;
             $this->tid=$tid;
@@ -325,7 +325,6 @@ session_start();
                 $tid=$row['tid'];
 
             }
-                //$aid=$row['assigned'];
                 $q3="INSERT INTO log(id, tid,stid,uid,note,done)VALUES('','$tid','$stid','$uid','Assigned to $name','')";
                 $this->connection->exec($q3);
 
