@@ -44,7 +44,7 @@ define("ROW_PER_PAGE",2);
     width: 80%;
 }
 .greenbtn{
-    background-color: blanchedalmond;
+    background-color: greenyellow;
     border-radius: 1rem;
     padding: 0.5%;
     width: 95%;
@@ -248,7 +248,7 @@ th{
                                         foreach($set as $row){
                                         $note=$row['note'];
                                     } ?> <?php
-                                        echo "$note |" . "<br>" . "  <textarea rows = '3' cols = '30' maxlength = '200' name = 'note'></textarea>"; 
+                                        echo "$note |" . "<br>" . "  <textarea rows = '3' cols = '30' maxlength = '200' name = 'note'></textarea>";
                                     ?>
 
                             </td>
@@ -290,21 +290,71 @@ th{
                 </div>
             </div>
 
+            <?php require_once "globaldb.php";
+            
+            if(isset($_POST['assignall'])){
+                $name=$_POST['sname'];
+                foreach($_POST['check'] AS $value){
+                    //$st=$_POST['stid'];
+                    $q2 = $gbdb->prepare("SELECT * FROM trows WHERE stid= :st");
+                    
+                    $q2->bindValue(':st', $value);
+                    $q2->execute();
+                    $res = $q2->fetchAll();
+                    
+                    /*$q2="SELECT * FROM trows WHERE stid='$stid'";
+                    $res=$gbdb->query($q2);*/
+                    foreach($res as $row){
+                        $stid=$row['stid'];
+                        $tid=$row['tid'];
+                    }
+                    $q1="SELECT * FROM user WHERE name='$name'";
+                    $result=$gbdb->query($q1);
+                    foreach($result as $row){
+                        $uid=$row['id'];
+                    }
+                    
+                    $q3="INSERT INTO log(id, tid,stid,uid,note,done)VALUES('','$tid','$stid','$uid','Assigned to $name','')";
+                    $gbdb->query($q3);
+    
+                    $q4="UPDATE trows SET uid='$uid' WHERE tid='$tid' AND stid='$stid'";
+                    if($gbdb->query($q4)){
+                        echo "Assigned to $name";
+                    }
+                    else{
+                        echo "Failed";
+                    }
+                } 
+            }
+            ?>
+
+            <!-- Javascript for select-all and deselect-all checkboxes -->
+            <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+            <script>
+                $(document).ready(function(){
+                    $("#allsubtask #select-all").click(function(){
+                        $("#allsubtask input[type='checkbox']").prop('checked',this.checked);
+                    });
+                });
+            </script>
              <!-- Assign Sub-Task template -->
              <div class="rightinnerdiv">
                 <div id="assignstask" class="innerright portion" style="display:none">
                     <button class="greenbtn">Assign Sub-Task</button>
+                    <form id="allsubtask" action='' method="post">
 
                     <?php
                             $u= new data;
                             $u->setconnection();
                             $u->viewstask();
                             $result=$u->viewstask();
+                            //$rc=$result->rowCount();
                     ?>
+
                     <table class='tbl-qa'>
                         <thead>
                             <tr>
-                                <th class='table-header' width='5%'></th>
+                                <th class='table-header' width='5%'><input type="checkbox" id="select-all"/></th>
                                 <th class='table-header' width='15%'>Task</th>
                                 <th class='table-header' width='25%'>Sub-Tasks</th>
                                 <th class='table-header' width='10%'>User</th>
@@ -313,21 +363,23 @@ th{
                             </tr>
                         </thead>
                         <tbody id='table-body'>
-                        <?php 
-                            if(!empty($result)) { 
+                        <?php
+                            if(!empty($result)) {
                             foreach($result as $row) { 
                         ?>
-                        <form action="9userviewtask.php" method="post" enctype="multipart/form-data">
+                        <!-- <form action="9userviewtask.php" method="post" enctype="multipart/form-data"> -->
+                        
                         <tr class='table-row'>
-                            <td> <input type="checkbox"/>
-                            <div id="ifYes" style="display: none;">
-                                <select name="stid">
-                                    <?php echo "<option value='" . $row['stid'] . "'>" . $row['stid'] . "</option>"; ?>
-                                </select>
-                            </div>
+                            <td> <?php $st=$row['stid']; ?>
+                                <input type='checkbox' name='check[]' value="<?php echo $st ?>"/>
+                                <div id="ifYes" style="display: none;">
+                                    <select name="stid">
+                                        <?php echo "<option value='" . $row['stid'] . "'>" . $row['stid'] . "</option>"; ?>
+                                    </select>
+                                </div>
                             </td>
                             <?php $uid=$row['uid']; $tid=$row['tid']; $stid=$row['stid']; $t1=$row['t1']; ?>
-
+                                
                             <td>
                                 <?php if($stid % 10==1){
                                     $obj=new data();
@@ -339,7 +391,7 @@ th{
                                         }
                                         echo $tname;
                                     }
-                                    
+
                                 ?>
                             </td>
                             <td><?php   if($stid % 10==1){
@@ -382,14 +434,26 @@ th{
                             </td>
                             <td><button class='btn-primary' value='submit'>ASSIGN</button></td>
                         </tr>
-
-                        </form>
-
+                        <!-- </form> -->
                         <?php
-                            } 
-                        } 
+                            }
+                        }
                         ?>
                         </table>
+                        <select name="sname">
+                            <?php
+                                $obj=new data();
+                                $obj->setconnection();
+                                $obj->studentrecord();
+                                $recordset=$obj->studentrecord();
+                                echo "<option>Select</option>";
+                                foreach($recordset as $row){
+                                    echo "<option value='" . $row['name'] . "'>" . $row['name'] . "</option>";
+                                }
+                            ?>
+                        </select> <br>
+                        <input type="submit" class='btn-primary' name='assignall' value="Assign All Tasks"/>
+                    </form>
                 </div>
             </div>
 
@@ -458,10 +522,10 @@ th{
                                     $recordset=$obj->note($stid);
                                     foreach($recordset as $row){
                                         $note=$row['note'];
-                                    } 
+                                    }
                                     ?>
                                     <?php
-                                        echo "$note |" . "<br>" . "  <textarea rows = '3' cols = '30' maxlength = '200' name = 'note'></textarea>"; 
+                                        echo "$note |" . "<br>" . "  <textarea rows = '3' cols = '30' maxlength = '200' name = 'note'></textarea>";
                                     ?>
                             </td>
                             <td>
@@ -576,7 +640,7 @@ th{
 
                                 </td>
                                 <td>
-                                    <?php    
+                                    <?php
                                         $q="SELECT * FROM log WHERE note like 'Reassigned%' ORDER BY stid ASC";
                                         $result = mysqli_query($conn, $q);
                                         $rc = mysqli_num_rows($result);
@@ -795,7 +859,7 @@ th{
 
             <!-- Unassigned Tasks -->
             <div class="rightinnerdiv">
-                <div id="unassigned" class="innerright portion" style="<?php if(!empty($_REQUEST['unid'])||(!empty($_REQUEST['ntid']))){$viewid=$_REQUEST['unid'];$tid=$_REQUEST['ntid'];}else{echo "display:none";}?>">
+                <div id="unassigned" class="innerright portion" style="<?php if(!empty($_REQUEST['unid'])||(!empty($_REQUEST['ntid']))){$viewid=$_REQUEST['unid'];$tid=$_REQUEST['ntid'];}else{echo "display:none;";}?>">
                         <button class="greenbtn">Unassigned Tasks</button>
                         <?php
                         if(!empty($tid)){
@@ -911,7 +975,7 @@ th{
 
             <!-- Clarification Needed Tasks -->
             <div class="rightinnerdiv">
-                <div id="clarif" class="innerright portion" style="<?php if(!empty($_REQUEST['clid'])||(!empty($_REQUEST['cid']))){$viewid=$_REQUEST['clid'];$tid=$_REQUEST['cid'];}else{echo "display:none";}?>">
+                <div id="clarif" class="innerright portion" style="<?php if(!empty($_REQUEST['clid'])||(!empty($_REQUEST['cid']))){$viewid=$_REQUEST['clid'];$tid=$_REQUEST['cid'];}else{echo "display:none;";}?>">
                         <button class="greenbtn">Need Clarification</button>
                         <?php
                         if(!empty($tid)){
@@ -1051,7 +1115,7 @@ th{
 
             <!-- Review Needed Tasks -->
             <div class="rightinnerdiv">
-                <div id="review" class="innerright portion" style="<?php if(!empty($_REQUEST['rvid'])||(!empty($_REQUEST['qtid']))){$viewid=$_REQUEST['rvid'];$tid=$_REQUEST['qtid'];}else{echo "display:none";}?>">
+                <div id="review" class="innerright portion" style="<?php if(!empty($_REQUEST['rvid'])||(!empty($_REQUEST['qtid']))){$viewid=$_REQUEST['rvid'];$tid=$_REQUEST['qtid'];}else{echo "display:none;";}?>">
                         <button class="greenbtn">Need Review</button>
                         <?php
                         if(!empty($tid)){
@@ -1191,7 +1255,7 @@ th{
 
             <!-- Completed Tasks -->
             <div class="rightinnerdiv">
-                <div id="complete" class="innerright portion" style="<?php if(!empty($_REQUEST['ctid'])||(!empty($_REQUEST['cctid']))){$viewid=$_REQUEST['ctid'];$tid=$_REQUEST['cctid'];}else{echo "display:none";}?>">
+                <div id="complete" class="innerright portion" style="<?php if(!empty($_REQUEST['ctid'])||(!empty($_REQUEST['cctid']))){$viewid=$_REQUEST['ctid'];$tid=$_REQUEST['cctid'];}else{echo "display:none;";}?>">
                         <button class="greenbtn">Completed Task</button>
                         <?php
                         if(!empty($tid)){
@@ -1331,7 +1395,7 @@ th{
 
             <!-- Reassign Tasks (Complete Lifecycle) -->
             <div class="rightinnerdiv">
-                <div id="complete" class="innerright portion" style="<?php if(!empty($_REQUEST['cpid'])||(!empty($_REQUEST['retid']))){$viewid=$_REQUEST['cpid'];$tid=$_REQUEST['retid'];}else{echo "display:none";}?>">
+                <div id="complete" class="innerright portion" style="<?php if(!empty($_REQUEST['cpid'])||(!empty($_REQUEST['retid']))){$viewid=$_REQUEST['cpid'];$tid=$_REQUEST['retid'];}else{echo "display:none;";}?>">
                         <button class="greenbtn">Complete Lifecycle</button>
                         <?php
                             if(!empty($tid)){
