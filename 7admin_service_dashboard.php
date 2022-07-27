@@ -359,7 +359,7 @@ th{
                                 <th class='table-header' width='25%'>Sub-Tasks</th>
                                 <th class='table-header' width='10%'>User</th>
                                 <th class='table-header' width='10%'>Status</th>
-                                <th class='table-header' width='15%'>Assign To</th>
+                                <!-- <th class='table-header' width='15%'>Assign To</th> -->
                             </tr>
                         </thead>
                         <tbody id='table-body'>
@@ -432,7 +432,7 @@ th{
                                     }
                                 ?>
                             </td>
-                            <td><button class='btn-primary' value='submit'>ASSIGN</button></td>
+                            <!-- <td><button class='btn-primary' value='submit'>ASSIGN</button></td> -->
                         </tr>
                         <!-- </form> -->
                         <?php
@@ -452,7 +452,7 @@ th{
                                 }
                             ?>
                         </select> <br>
-                        <input type="submit" class='btn-primary' name='assignall' value="Assign All Tasks"/>
+                        <input type="submit" class='btn-primary' name='assignall' value="Assign Task(s)"/>
                     </form>
                 </div>
             </div>
