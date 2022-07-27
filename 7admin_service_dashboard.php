@@ -582,7 +582,7 @@ th{
                             <tr>
                                 <th class='table-header' width='20%'>Task</th>
                                 <th class='table-header' width='17%'>No. of Tasks</th>
-                                <th class='table-header' width='17%'>Not Assigned</th>
+                                <th class='table-header' width='17%'>Assigned</th>
                                 <th class='table-header' width='17%'>Need Clarification</th>
                                 <th class='table-header' width='17%'>Quality Check</th>
                                 <th class='table-header' width='17%'>Completed</th>
@@ -602,7 +602,7 @@ th{
                                 </td>
                                 <td>
                                     <?php
-                                        $q="SELECT * FROM trows WHERE status=''";
+                                        $q="SELECT * FROM trows WHERE uid!='0' AND status=''";
                                         $result = mysqli_query($conn, $q);
                                         $rc = mysqli_num_rows($result);
 
@@ -674,7 +674,7 @@ th{
                                 </td>
                                 <td>
                                     <?php
-                                        $q="SELECT * FROM trows WHERE status='' AND tid='$tid'";
+                                        $q="SELECT * FROM trows WHERE uid!='0' AND status='' AND tid='$tid'";
                                         $result = mysqli_query($conn, $q);
                                         $rc = mysqli_num_rows($result);
                                         while ($row = mysqli_fetch_array($result)) {
